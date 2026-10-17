@@ -1,1017 +1,533 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RMDSHOP - Toko Online Terpercaya</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        purple: {
-                            50: '#f5f3ff', 100: '#ede9fe', 500: '#8b5cf6',
-                            600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6',
-                            900: '#4c1d95', 950: '#3b0764',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome untuk Icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase App & Firestore SDK versi Kompatibel -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UangKu - Pinjaman Online Cepat & Aman</title>
+<!-- Library EmailJS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+  (function() {
+      emailjs.init("92OGQ3E61pPrii0OM"); 
+  })();
+</script>
+
+<!-- Library Firebase Compat (Untuk HTML murni) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<style>
+  /* (CSS Tetap sama) */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { background-color: #f2f2f2; color: #333; display: flex; justify-content: center; overflow-x: hidden; }
+  .app-container { width: 100%; max-width: 400px; background-color: #f2f2f2; position: relative; min-height: 100vh; overflow-x: hidden; }
+
+  /* HOME */
+  #home-page { padding-bottom: 70px; display: block; }
+  .header-bg { background: linear-gradient(135deg, #38d16a, #2eb85c); padding: 30px 20px 80px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
+  .nav-header { display: flex; justify-content: space-between; align-items: center; color: white; }
+  .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 22px; letter-spacing: 0.5px; }
+  .logo-icon { font-size: 26px; }
+  .headset-icon { font-size: 24px; cursor: pointer; }
+  .main-card { background: white; border-radius: 16px; margin: -60px 20px 20px 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; z-index: 10; }
+  .promo-banner { background-color: #d4f8a4; color: #1a5310; padding: 8px 15px; border-radius: 0 0 20px 20px; font-size: 13px; display: inline-block; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-weight: 500; border: 1px solid #c3e890; border-top: none; }
+  .limit-title { margin-top: 20px; font-size: 16px; font-weight: 600; color: #333; }
+  .limit-amount { font-size: 42px; font-weight: 800; margin: 10px 0; display: flex; align-items: center; justify-content: center; }
+  .limit-amount span { font-size: 18px; margin-right: 5px; margin-top: 15px; }
+  .limit-subtitle { font-size: 13px; color: #888; margin-bottom: 25px; }
+  .limit-subtitle span { color: #2eb85c; font-weight: 600; }
+  .btn-cek { background: linear-gradient(90deg, #38d16a, #2eb85c); color: white; border: none; width: 100%; padding: 16px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(46, 184, 92, 0.3); transition: transform 0.2s; }
+  .ojk-badge { margin-top: 15px; font-size: 12px; color: #555; display: flex; justify-content: center; align-items: center; gap: 6px; }
+  .ojk-badge svg { width: 16px; height: 16px; fill: #2eb85c; }
+  .ojk-badge b { color: #2eb85c; font-weight: bold; }
+  .section-card { background: white; border-radius: 16px; margin: 0 20px 15px 20px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+  .section-header h3 { font-size: 16px; color: #333; display: flex; align-items: center; gap: 8px; }
+  .section-header h3 span { font-size: 13px; color: #888; font-weight: normal; }
+  .regulator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .reg-item { border: 1px solid #eee; border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666; height: 60px; }
+  .reg-item.right-side { flex-direction: row-reverse; }
+  .reg-text-red { color: #d32f2f; font-weight: bold; text-align: right; font-size: 10px; }
+  .placeholder-logo { font-weight: bold; font-size: 14px; }
+  .mitra-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+  .mitra-item { border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; display: flex; justify-content: center; align-items: center; height: 50px; box-shadow: 0 1px 5px rgba(0,0,0,0.02); }
+  .quick-links { display: flex; justify-content: space-evenly; padding: 10px 20px; margin: 0 20px 15px 20px; }
+  .ql-item { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: #666; cursor: pointer; }
+  .ql-icon { width: 40px; height: 40px; border-radius: 50%; background-color: #e8f5e9; display: flex; justify-content: center; align-items: center; }
+  .ql-icon svg { width: 22px; height: 22px; fill: #2eb85c; }
+  .stats-container { display: flex; justify-content: space-between; padding: 15px 30px; align-items: center; text-align: center; }
+  .stat-item .val { font-size: 18px; font-weight: bold; color: #777; }
+  .stat-item .val span { font-size: 12px; font-weight: normal; }
+  .stat-item .lbl { font-size: 11px; color: #999; margin-top: 5px; }
+  .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 400px; background: white; display: flex; justify-content: space-around; padding: 10px 0 15px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top-left-radius: 15px; border-top-right-radius: 15px; z-index: 100; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #9ca3af; font-size: 11px; cursor: pointer; transition: color 0.3s; }
+  .nav-item.active { color: #2eb85c; font-weight: bold; }
+  .nav-icon { width: 24px; height: 24px; fill: currentColor; transition: fill 0.3s; }
+  .alfamart { color: #e31837; } .bri { color: #00529c; } .bnc { color: #333; font-family: serif; } .bni { color: #f15a22; } .ovo { color: #4c3494; }
+
+  /* LOGIN */
+  #login-page { display: none; background-color: #f4fbf4; min-height: 100vh; flex-direction: column; position: absolute; top: 0; left: 0; width: 100%; z-index: 200; }
+  .login-hero { background: linear-gradient(180deg, #e2f8e6 0%, #f4fbf4 100%); padding: 30px 20px 20px 20px; position: relative; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
+  .login-hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(#e2f8e6 1px, transparent 1px), linear-gradient(90deg, #e2f8e6 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; z-index: 0; }
+  .login-title { position: relative; z-index: 1; color: #1c9b47; font-size: 18px; font-weight: 800; font-style: italic; margin-bottom: 25px; }
+  .illustration-container { position: relative; z-index: 1; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .banner-merah { background-color: #f1602f; color: white; font-weight: 800; font-size: 16px; padding: 8px 15px; border-radius: 8px; transform: rotate(-5deg); position: absolute; right: 10px; top: 20px; z-index: 2; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .banner-merah span { font-size: 10px; display: block; font-weight: 500; }
+  .banner-hijau { background-color: #1c9b47; color: white; font-weight: 800; font-size: 24px; padding: 10px 25px; border-radius: 12px; transform: rotate(3deg); position: absolute; left: 10px; top: 10px; z-index: 3; border: 3px dashed white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .kado-emoji { font-size: 70px; z-index: 1; margin-top: 40px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1)); }
+  .slider-dots { display: flex; justify-content: center; gap: 5px; margin-top: 15px; }
+  .dot { width: 20px; height: 4px; background-color: #ccc; border-radius: 2px; }
+  .dot.active { width: 30px; background-color: #555; }
+  .login-form-area { background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; margin-top: -20px; padding: 30px 20px; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 10; }
+  .form-label { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 8px; display: block; }
+  .input-group { display: flex; align-items: center; background-color: #f4f4f4; border-radius: 12px; padding: 0 15px; margin-bottom: 15px; border: 1px solid transparent; transition: border 0.3s; }
+  .input-group:focus-within { border-color: #1c9b47; background-color: #fff; }
+  .input-group svg { width: 20px; height: 20px; fill: #aaa; margin-right: 10px; }
+  .input-group input { width: 100%; padding: 16px 0; border: none; background: transparent; font-size: 15px; color: #333; outline: none; font-weight: 500; }
+  .input-group input::placeholder { color: #aaa; font-weight: normal; }
+  .btn-otp-inline { background-color: #1c9b47; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+  .btn-otp-inline:disabled { background-color: #a0dfb3; cursor: not-allowed; }
+  .btn-next { background-color: #1c9b47; color: white; border: none; width: 100%; padding: 16px; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(28, 155, 71, 0.2); transition: background 0.3s; margin-top: 10px; margin-bottom: 15px; }
+  .safe-text { display: flex; justify-content: center; align-items: center; gap: 5px; font-size: 12px; color: #555; margin-top: 10px;}
+  .safe-text svg { width: 16px; height: 16px; fill: #333; }
+  .terms-area { margin-top: auto; padding-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .checkbox-item { display: flex; align-items: flex-start; gap: 10px; font-size: 11px; color: #777; line-height: 1.5; cursor: pointer; }
+  .checkbox-item input[type="checkbox"] { appearance: none; min-width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 4px; background-color: transparent; position: relative; cursor: pointer; margin-top: 2px; transition: all 0.2s; }
+  .checkbox-item input[type="checkbox"]:checked { background-color: #1c9b47; border-color: #1c9b47; }
+  .checkbox-item input[type="checkbox"]:checked::after { content: "✓"; color: white; font-size: 14px; font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .checkbox-item a { color: #1c9b47; text-decoration: none; font-weight: 500; }
+
+  /* KTP */
+  #ktp-page { display: none; background-color: #f4fbf4; min-height: 100vh; flex-direction: column; position: absolute; top: 0; left: 0; width: 100%; z-index: 300; }
+  .ktp-header { background: linear-gradient(180deg, #6ed98d 0%, #93e5aa 100%); padding: 20px; display: flex; justify-content: space-between; align-items: center; color: #333; }
+  .ktp-header .back-btn { font-size: 24px; cursor: pointer; font-weight: bold; }
+  .ktp-header h2 { font-size: 18px; font-weight: 700; }
+  .progress-container { padding: 15px 20px; background: linear-gradient(180deg, #93e5aa 0%, #f4fbf4 100%); display: flex; align-items: center; gap: 5px; position: relative; }
+  .progress-bar { height: 6px; background-color: #2eb85c; border-radius: 3px; flex: 1; max-width: 15%; }
+  .progress-dot { width: 6px; height: 6px; background-color: #a0dfb3; border-radius: 50%; }
+  .progress-dot.active { background-color: #2eb85c; }
+  .gift-icon { position: absolute; right: 20px; top: 0; font-size: 40px; transform: translateY(-10px); }
+  .promo-box { background: linear-gradient(90deg, #ff8a00, #ff5e00); border-radius: 12px; margin: 0 20px 15px 20px; padding: 15px; color: white; position: relative; box-shadow: 0 4px 10px rgba(255, 138, 0, 0.2); }
+  .promo-box .text-sm { font-size: 12px; margin-bottom: 8px; }
+  .promo-box .text-sm b { font-size: 14px; }
+  .promo-box .inner-white { background: white; border-radius: 8px; padding: 15px; color: #333; display: flex; justify-content: space-between; align-items: center; }
+  .promo-box .inner-white .left h4 { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+  .promo-box .inner-white .left .percent { font-size: 32px; color: #ff5e00; font-weight: 800; display: flex; align-items: center; gap: 5px;}
+  .promo-box .inner-white .left .percent span { font-size: 10px; background: #ffeb3b; color: #333; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+  .promo-box .inner-white .right { font-size: 12px; color: #ff5e00; font-weight: bold; text-align: right; }
+  .ktp-card { background: white; border-radius: 16px; margin: 0 20px 20px 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .limit-info { background: #fff8e1; border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: bold; color: #8d6e63; margin-bottom: 20px; }
+  .limit-info .icon { font-size: 20px; }
+  .ktp-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; line-height: 1.4; }
+  .upload-area { border: 2px dashed #a0dfb3; border-radius: 12px; background-color: #f9fff9; padding: 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; cursor: pointer; min-height: 180px; display: flex; justify-content: center; align-items: center; }
+  .mock-ktp { background: #dcedc8; width: 90%; height: 140px; border-radius: 8px; position: relative; border: 1px solid #c5e1a5; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 10px; color: #555; }
+  .corner { position: absolute; width: 20px; height: 20px; border-color: #2eb85c; border-style: solid; }
+  .corner-tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; border-top-left-radius: 8px; }
+  .corner-tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; border-top-right-radius: 8px; }
+  .corner-bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; border-bottom-left-radius: 8px; }
+  .corner-br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; border-bottom-right-radius: 8px; }
+  .view-sample { text-align: center; color: #2eb85c; font-size: 14px; font-weight: bold; margin-bottom: 25px; cursor: pointer; }
+  .btn-photo { background: linear-gradient(90deg, #38d16a, #2eb85c); color: white; border: none; width: 100%; padding: 18px; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(46, 184, 92, 0.3); margin-bottom: 20px; }
+  .ojk-bottom { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 12px; color: #2eb85c; font-weight: bold; }
+  .ojk-bottom svg { width: 18px; height: 18px; fill: #2eb85c; }
+</style>
 </head>
-<body class="bg-purple-50 text-gray-800 font-sans pb-24 md:pb-16">
+<body>
 
-    <!-- HEADER / NAVBAR -->
-    <header class="bg-purple-800 text-white sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="#" onclick="tampilkanBeranda()" id="logo-container" class="text-2xl font-extrabold tracking-wider flex items-center gap-2">
-                <i class="fa-solid fa-store text-purple-300"></i> 
-                <span id="logo-text">RMD<span class="text-purple-300">SHOP</span></span>
-            </a>
-            
-            <nav class="hidden md:flex space-x-6 font-medium items-center">
-                <a href="#" onclick="tampilkanBeranda()" class="hover:text-purple-300 transition">Beranda</a>
-                <a href="#katalog" onclick="tampilkanBeranda()" class="hover:text-purple-300 transition">Kategori</a>
-                <button id="nav-admin-btn" onclick="bukaPanelAdmin()" class="hidden bg-purple-700 hover:bg-purple-600 text-purple-200 px-3 py-1.5 rounded-lg text-sm transition font-semibold items-center gap-1.5">
-                    <i class="fa-solid fa-user-gear"></i> Panel Admin
-                </button>
-                <a href="#kontak" class="hover:text-purple-300 transition">Kontak</a>
-            </nav>
+<div class="app-container">
+  
+  <!-- HOME -->
+  <div id="home-page">
+    <div class="header-bg">
+      <div class="nav-header">
+        <div class="logo-area"><span class="logo-icon">💰</span> UangKu</div>
+        <div class="headset-icon">🎧</div>
+      </div>
+      <div id="user-greeting" style="display: none; color: white; margin-top: 15px;">
+        <p style="font-size: 12px; opacity: 0.8;">Selamat datang kembali,</p>
+        <p id="greeting-email" style="font-size: 16px; font-weight: bold;">user@email.com</p>
+      </div>
+    </div>
+    <div class="main-card">
+      <div class="promo-banner">🔥 Pinjam hari ini, bebas biaya admin</div>
+      <div class="limit-title">Limit Pinjaman Hingga</div>
+      <div class="limit-amount"><span>Rp</span> 100.000.000</div>
+      <div class="limit-subtitle">Bunga mulai <span>0,01%</span> per hari, cicilan 1-12 bulan</div>
+      <button class="btn-cek" id="btn-cek-limit" onclick="bukaLogin()">Cek Limit</button>
+      <div class="ojk-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        <b>UangKu</b> telah berizin dan diawasi oleh OJK
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-header"><h3>Regulator <span>| TKB90: 99,42%</span> <i>ⓘ</i></h3></div>
+      <div class="regulator-grid">
+        <div class="reg-item"><div>Berizin dan diawasi</div><div class="reg-text-red">OTORITAS<br>JASA<br>KEUANGAN</div></div>
+        <div class="reg-item right-side"><div>Anggota dari</div><div class="placeholder-logo" style="color: #008a4b; font-style: italic;">afpi</div></div>
+        <div class="reg-item"><div>Terdaftar di</div><div class="placeholder-logo" style="color: #00529c;">KOMINFO</div></div>
+        <div class="reg-item right-side"><div>Anggota dari</div><div class="placeholder-logo" style="color: #1976d2;">fintech<br><span style="font-size:10px; font-weight:normal;">indonesia</span></div></div>
+        <div class="reg-item"><div>Tersertifikasi dengan</div><div class="placeholder-logo" style="color: #008a4b;">ISO</div></div>
+        <div class="reg-item right-side"><div>Anggota dari</div><div class="placeholder-logo" style="color: #d32f2f;">LAPS<br><span style="font-size:9px; font-weight:normal;">SJK</span></div></div>
+      </div>
+    </div>
+    <div class="section-card">
+      <h3 style="font-size: 16px; margin-bottom: 5px;">Mitra</h3>
+      <p style="font-size: 12px; color: #888; margin-bottom: 15px;">Kami menjalin kolaborasi dengan instansi atau perusahaan lain.</p>
+      <div class="mitra-grid">
+        <div class="mitra-item"><span class="placeholder-logo alfamart">Alfamart</span></div>
+        <div class="mitra-item"><span class="placeholder-logo bri">BRI</span></div>
+        <div class="mitra-item"><span class="placeholder-logo bnc">B N C</span></div>
+        <div class="mitra-item"><span class="placeholder-logo bni">BNI</span></div>
+        <div class="mitra-item"><span class="placeholder-logo ovo">OVO</span></div>
+      </div>
+    </div>
+    <div class="quick-links">
+      <div class="ql-item"><div class="ql-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></div><span>Cara Pinjam</span></div>
+      <div class="ql-item"><div class="ql-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg></div><span>Hati2 Penipu</span></div>
+    </div>
+    <div class="stats-container">
+      <div class="stat-item"><div class="val">9.1<span>Juta</span></div><div class="lbl">Jumlah pengguna</div></div>
+      <div class="stat-item"><div class="val">8<span>Tahun</span></div><div class="lbl">Beroperasi</div></div>
+      <div class="stat-item"><div class="val">30<span>+</span></div><div class="lbl">Mitra</div></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></div>
+      <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Tagihan</span></div>
+      <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Profil</span></div>
+    </div>
+  </div>
 
-            <div class="flex items-center space-x-3">
-                <div id="auth-menu" class="flex items-center space-x-2">
-                    <button onclick="bukaModalLogin()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition">LOGIN</button>
-                    <button onclick="bukaModalDaftar()" class="bg-white text-purple-800 hover:bg-purple-100 px-3 py-2 rounded-lg text-xs font-bold transition">DAFTAR</button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- KONTEN UTAMA (BERANDA) -->
-    <div id="view-beranda">
-        <section class="bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-800 text-white py-12 px-4 text-center">
-            <div class="container mx-auto max-w-3xl">
-                <h1 class="text-3xl md:text-4xl font-extrabold mb-2 leading-tight">Selamat Datang di <span class="text-purple-300">RMDSHOP</span></h1>
-                <p class="text-sm md:text-base text-purple-200 mb-6">Pusat Top-Up & Belanja Online Terlengkap.</p>
-
-                <div id="user-dashboard-card" class="bg-purple-800 bg-opacity-75 backdrop-blur-md border border-purple-600 p-5 rounded-2xl shadow-xl max-w-md mx-auto hidden">
-                    <div class="mb-3">
-                        <span class="text-xs uppercase tracking-wider text-purple-300 font-bold">Total Saldo Anda</span>
-                        <div id="user-saldo-display" class="text-3xl font-extrabold text-white mt-1">Rp 0</div>
-                    </div>
-                    <div id="dashboard-menu-grid" class="grid grid-cols-3 gap-2 pt-2 border-t border-purple-700">
-                        <button onclick="bukaModalProfil()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-xs font-bold py-2 px-1 rounded-xl transition flex flex-col items-center gap-1">
-                            <i class="fa-solid fa-user text-sm text-purple-300"></i> PROFIL
-                        </button>
-                        <button onclick="bukaModalTopUp()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-xs font-bold py-2 px-1 rounded-xl transition flex flex-col items-center gap-1">
-                            <i class="fa-solid fa-wallet text-sm text-purple-300"></i> TOPUP
-                        </button>
-                        <button onclick="bukaModalRiwayat()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-xs font-bold py-2 px-1 rounded-xl transition flex flex-col items-center gap-1">
-                            <i class="fa-solid fa-clock-rotate-left text-sm text-purple-300"></i> RIWAYAT
-                        </button>
-                    </div>
-                </div>
-
-                <div id="guest-banner" class="mt-4">
-                    <a href="#katalog" class="bg-white text-purple-800 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-purple-100 transition duration-300 inline-block text-sm">
-                        Mulai Belanja <i class="fa-solid fa-arrow-down ml-2"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- IMAGE SLIDER SECTION -->
-        <section class="container mx-auto px-4 pt-8 max-w-4xl">
-            <div class="relative overflow-hidden rounded-2xl shadow-md bg-white border border-purple-100">
-                <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
-                    <div class="min-w-full h-44 sm:h-56 md:h-64 flex items-center justify-center bg-purple-900 relative">
-                        <img id="banner-img-0" src="" alt="Banner 1" class="w-full h-full object-cover">
-                    </div>
-                    <div class="min-w-full h-44 sm:h-56 md:h-64 flex items-center justify-center bg-purple-900 relative">
-                        <img id="banner-img-1" src="" alt="Banner 2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="min-w-full h-44 sm:h-56 md:h-64 flex items-center justify-center bg-purple-900 relative">
-                        <img id="banner-img-2" src="" alt="Banner 3" class="w-full h-full object-cover">
-                    </div>
-                </div>
-
-                <button onclick="geserSlider(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-9 h-9 rounded-full flex items-center justify-center transition">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button onclick="geserSlider(1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-9 h-9 rounded-full flex items-center justify-center transition">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
-
-                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-2">
-                    <button onclick="setSliderIndex(0)" id="dot-0" class="w-2.5 h-2.5 rounded-full bg-white opacity-90 transition"></button>
-                    <button onclick="setSliderIndex(1)" id="dot-1" class="w-2.5 h-2.5 rounded-full bg-white opacity-50 transition"></button>
-                    <button onclick="setSliderIndex(2)" id="dot-2" class="w-2.5 h-2.5 rounded-full bg-white opacity-50 transition"></button>
-                </div>
-            </div>
-        </section>
-
-        <!-- KATEGORI UTAMA SECTION -->
-        <main id="katalog" class="container mx-auto px-4 py-12">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-purple-900">Kategori Pilihan</h2>
-                <p class="text-gray-600 mt-2">Pilih kategori layanan yang Anda butuhkan</p>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-                <div onclick="bukaKategoriView('e-wallet')" class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center group border border-purple-100">
-                    <div class="w-16 h-16 bg-purple-100 group-hover:bg-purple-200 rounded-2xl flex items-center justify-center text-purple-700 text-2xl mb-4 transition"><i class="fa-solid fa-wallet"></i></div>
-                    <h3 class="font-bold text-lg text-gray-800">E-WALLET</h3>
-                    <p class="text-xs text-gray-500 mt-1">Topup Dana, Gopay, Ovo, dll</p>
-                </div>
-                <div onclick="bukaKategoriView('pulsa')" class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center group border border-purple-100">
-                    <div class="w-16 h-16 bg-purple-100 group-hover:bg-purple-200 rounded-2xl flex items-center justify-center text-purple-700 text-2xl mb-4 transition"><i class="fa-solid fa-mobile-screen"></i></div>
-                    <h3 class="font-bold text-lg text-gray-800">PULSA</h3>
-                    <p class="text-xs text-gray-500 mt-1">Pulsa & Paket Data Semua Operator</p>
-                </div>
-                <div onclick="bukaKategoriView('game')" class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center group border border-purple-100">
-                    <div class="w-16 h-16 bg-purple-100 group-hover:bg-purple-200 rounded-2xl flex items-center justify-center text-purple-700 text-2xl mb-4 transition"><i class="fa-solid fa-gamepad"></i></div>
-                    <h3 class="font-bold text-lg text-gray-800">GAME</h3>
-                    <p class="text-xs text-gray-500 mt-1">Topup Diamond ML, FF, Pubg</p>
-                </div>
-                <div onclick="bukaKategoriView('aplikasi')" class="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer flex flex-col items-center text-center group border border-purple-100">
-                    <div class="w-16 h-16 bg-purple-100 group-hover:bg-purple-200 rounded-2xl flex items-center justify-center text-purple-700 text-2xl mb-4 transition"><i class="fa-solid fa-layer-group"></i></div>
-                    <h3 class="font-bold text-lg text-gray-800">APLIKASI</h3>
-                    <p class="text-xs text-gray-500 mt-1">Langganan Netflix, Spotify, dll</p>
-                </div>
-            </div>
-        </main>
+  <!-- LOGIN -->
+  <div id="login-page">
+    <div class="login-hero">
+      <div class="login-title">Daftar dan Login untuk Nikmati</div>
+      <div class="illustration-container">
+        <div class="banner-merah"><span>Pinjaman<br>hingga</span>100 JUTA</div>
+        <div class="banner-hijau">0% Bunga</div>
+        <div class="kado-emoji">🎁</div>
+      </div>
+      <div class="slider-dots"><div class="dot active"></div><div class="dot"></div></div>
     </div>
 
-    <!-- TAMPILAN KATEGORI DETAIL -->
-    <div id="view-kategori-detail" class="container mx-auto px-4 py-8 hidden max-w-4xl">
-        <button onclick="tampilkanBeranda()" class="mb-4 text-purple-700 hover:text-purple-900 font-bold flex items-center gap-2 text-sm bg-white px-3 py-1.5 rounded-lg shadow-sm border border-purple-100 inline-flex">
-            <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
-        </button>
+    <div class="login-form-area">
+      <label class="form-label">Email</label>
+      <div class="input-group">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <input type="email" placeholder="contoh@gmail.com" id="userEmail" oninput="cekStatusEmail()">
+      </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm mb-6 flex items-center gap-4 border border-purple-100">
-            <div id="detail-kat-icon" class="w-14 h-14 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-2xl shadow-inner"><i class="fa-solid fa-wallet"></i></div>
-            <div>
-                <h2 id="detail-kat-title" class="text-2xl font-extrabold text-purple-900 uppercase">E-Wallet</h2>
-                <p id="detail-kat-desc" class="text-xs text-gray-500 mt-0.5">Pilih produk dan layanan kategori ini dengan cepat dan aman.</p>
-            </div>
+      <label class="form-label">Password</label>
+      <div class="input-group">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <input type="password" placeholder="Masukkan Password" id="userPassword">
+      </div>
+
+      <div id="otp-section">
+        <label class="form-label">Kode OTP</label>
+        <div class="input-group" style="padding-right: 5px;">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <input type="text" placeholder="123456" id="kodeOtp" maxlength="6" style="letter-spacing: 2px;">
+          <button class="btn-otp-inline" id="btnKirimOtp" onclick="kirimOtp()">Kirim OTP</button>
         </div>
+      </div>
 
-        <div class="mb-6">
-            <input type="text" id="search-kategori-input" oninput="renderProdukKategoriDetail()" placeholder="Cari produk di kategori ini..." class="w-full bg-white border border-purple-200 rounded-xl p-3.5 text-sm focus:outline-none focus:border-purple-600 shadow-sm">
-        </div>
+      <button class="btn-next" onclick="prosesLogin()" id="btnSubmit">Masuk / Daftar</button>
 
-        <div id="detail-produk-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4"></div>
+      <div class="safe-text">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Data Anda aman bersama kami.
+      </div>
+
+      <div class="terms-area">
+        <label class="checkbox-item">
+          <input type="checkbox" id="cb1">
+          <span>Saya telah membaca dan menyetujui <a href="#">Kebijakan Privasi</a>, <a href="#">Ketentuan Penggunaan</a> dan <a href="#">Otorisasi</a> dari UangKu</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="cb2">
+          <span>Saya setuju menerima informasi promosi dari UangKu (termasuk di luar jam kerja dan hari libur).</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="cb3">
+          <span>Saya setuju untuk menerima promosi dari bank mitra.</span>
+        </label>
+      </div>
     </div>
+  </div>
 
-    <!-- TAMPILAN DETAIL PRODUK -->
-    <div id="view-detail-produk" class="container mx-auto px-4 py-8 hidden max-w-2xl">
-        <button onclick="bukaKategoriView(produkDipilih.kategori)" class="mb-4 text-purple-700 hover:text-purple-900 font-bold flex items-center gap-2 text-sm bg-white px-3 py-1.5 rounded-lg shadow-sm border border-purple-100 inline-flex">
-            <i class="fa-solid fa-arrow-left"></i> Kembali
-        </button>
-
-        <div class="bg-white p-6 rounded-2xl shadow-md border border-purple-100 mb-4 flex items-center gap-4">
-            <img id="transaksi-produk-img" src="" alt="Produk" class="w-16 h-16 object-cover rounded-xl border">
-            <div>
-                <h2 id="transaksi-produk-nama" class="text-xl font-bold text-purple-900">Nama Produk</h2>
-                <p class="text-xs text-gray-500">Pilih nominal dan lengkapi data pesanan di bawah ini.</p>
-            </div>
-        </div>
-
-        <div class="space-y-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-purple-100">
-                <label class="block text-sm font-bold text-purple-900 mb-2">1. Masukkan Nomor Tujuan / ID Akun:</label>
-                <input type="text" id="input-target-tujuan" placeholder="Contoh: ID Pengguna atau Username" class="w-full border border-purple-200 rounded-xl p-3 text-sm focus:outline-none focus:border-purple-600">
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-purple-100">
-                <label class="block text-sm font-bold text-purple-900 mb-3">2. Nominal:</label>
-                <div id="nominal-grid-container" class="grid grid-cols-2 gap-3"></div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-purple-100">
-                <label class="block text-sm font-bold text-purple-900 mb-2">3. Metode Pembayaran:</label>
-                <div class="bg-purple-50 p-3.5 rounded-xl border border-purple-200 flex justify-between items-center">
-                    <span class="text-xs font-semibold text-gray-700">Saldo Utama:</span>
-                    <span id="label-saldo-utama" class="text-sm font-extrabold text-purple-900">Rp 0</span>
-                </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-purple-100 space-y-3">
-                <label class="block text-sm font-bold text-purple-900">4. Konfirmasi Pembayaran:</label>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Nomor WhatsApp (Isi hanya angka):</label>
-                    <input type="text" id="input-wa-konfirmasi" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="08xxxxxxxxxx" class="w-full border border-purple-200 rounded-xl p-2.5 text-sm focus:outline-none focus:border-purple-600">
-                </div>
-
-                <div class="bg-purple-50 p-4 rounded-xl space-y-1.5 border border-purple-100 text-xs">
-                    <div class="font-bold text-purple-900 mb-1 uppercase">Ringkasan Pesanan:</div>
-                    <div class="flex justify-between text-gray-600"><span>Nominal</span><span id="summary-nominal" class="font-bold text-purple-900">-</span></div>
-                    <div class="flex justify-between text-gray-600"><span>Metode Pembayaran</span><span class="font-bold text-purple-900">Saldo Utama</span></div>
-                    <div class="flex justify-between text-sm font-bold text-purple-900 border-t pt-2 mt-1"><span>Total Tagihan</span><span id="summary-total">Rp 0</span></div>
-                </div>
-
-                <button onclick="eksekusiBeliSekarang()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-3.5 rounded-xl transition shadow-md text-sm mt-2">BELI SEKARANG</button>
-            </div>
-        </div>
+  <!-- KTP -->
+  <div id="ktp-page">
+    <div class="ktp-header">
+      <div class="back-btn">&#8592;</div>
+      <h2>KTP</h2>
+      <div class="headset-icon" style="color: #2eb85c;">🎧</div>
     </div>
-
-    <!-- SECTION FITUR KEUNGGULAN TOKO (DI ATAS FOOTER) -->
-    <section class="container mx-auto px-4 py-8 max-w-4xl">
-        <div class="bg-white rounded-2xl shadow-sm border border-purple-100 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="flex items-start gap-4 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
-                <img id="fitur-img-0" src="https://api.iconify.design/lucide:badge-percent.svg?color=%2316a34a" alt="Penawaran Menarik" class="w-12 h-12 object-contain shrink-0">
-                <div>
-                    <h3 class="font-bold text-gray-900 text-base mb-1">Penawaran Menarik</h3>
-                    <p class="text-xs text-gray-600 leading-relaxed">Selalu memberikan penawaran menarik dan diskon untuk produk-produk kami untukmu.</p>
-                </div>
-            </div>
-            <div class="flex items-start gap-4 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
-                <img id="fitur-img-1" src="https://api.iconify.design/lucide:zap.svg?color=%2316a34a" alt="Proses Cepat" class="w-12 h-12 object-contain shrink-0">
-                <div>
-                    <h3 class="font-bold text-gray-900 text-base mb-1">Proses Cepat</h3>
-                    <p class="text-xs text-gray-600 leading-relaxed">Setiap produk yang kamu beli akan kamu dapatkan secara cepat kurang dari 10 menit.</p>
-                </div>
-            </div>
-            <div class="flex items-start gap-4 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
-                <img id="fitur-img-2" src="https://api.iconify.design/lucide:headphones.svg?color=%2316a34a" alt="Dukungan 24/7" class="w-12 h-12 object-contain shrink-0">
-                <div>
-                    <h3 class="font-bold text-gray-900 text-base mb-1">Dukungan 24/7 tanpa kenal waktu</h3>
-                    <p class="text-xs text-gray-600 leading-relaxed">Tim kami akan selalu siap sedia membantu kamu 7 hari 24 jam tanpa kenal waktu.</p>
-                </div>
-            </div>
-            <div class="flex items-start gap-4 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
-                <img id="fitur-img-3" src="https://api.iconify.design/lucide:shield-check.svg?color=%2316a34a" alt="Pembayaran Aman" class="w-12 h-12 object-contain shrink-0">
-                <div>
-                    <h3 class="font-bold text-gray-900 text-base mb-1">Pembayaran aman, jaminan uang kembali</h3>
-                    <p class="text-xs text-gray-600 leading-relaxed">Jaminan pembayaran yang aman dan mudah dengan jaminan uang kembali.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer id="kontak" class="bg-purple-950 text-purple-300 py-8 px-4 border-t border-purple-800 mt-6">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h3 class="text-xl font-bold text-white">RMDSHOP</h3>
-                <p class="text-sm mt-1">Belanja Mudah, Aman, dan Nyaman.</p>
-            </div>
-            <div class="flex space-x-6 text-xl">
-                <a href="https://wa.me/rmdshop1" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://wa.me/rmdshop1" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="https://wa.me/rmdshop1" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
-            </div>
-            <p class="text-xs text-purple-400">&copy; 2026 RMDSHOP. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <!-- FIXED BOTTOM NAVIGATION BAR -->
-    <div class="fixed bottom-0 left-0 right-0 bg-purple-900 border-t border-purple-700 shadow-2xl z-40 px-2 py-2">
-        <div class="max-w-md mx-auto flex justify-around items-center">
-            <button onclick="bukaKategoriView('e-wallet')" class="flex flex-col items-center text-purple-200 hover:text-white transition group py-1 px-2">
-                <div class="bg-purple-800 group-hover:bg-purple-700 p-2 rounded-xl mb-1 transition"><i class="fa-solid fa-wallet text-lg text-purple-300"></i></div>
-                <span class="text-[11px] font-semibold tracking-wide">E-WALLET</span>
-            </button>
-            <button onclick="bukaKategoriView('pulsa')" class="flex flex-col items-center text-purple-200 hover:text-white transition group py-1 px-2">
-                <div class="bg-purple-800 group-hover:bg-purple-700 p-2 rounded-xl mb-1 transition"><i class="fa-solid fa-mobile-screen text-lg text-purple-300"></i></div>
-                <span class="text-[11px] font-semibold tracking-wide">PULSA</span>
-            </button>
-            <button onclick="tampilkanBeranda()" class="flex flex-col items-center -mt-5 text-white transition group">
-                <div class="bg-pink-600 hover:bg-pink-500 shadow-lg w-14 h-14 rounded-full flex items-center justify-center border-4 border-purple-900 transition transform group-hover:scale-105"><i class="fa-solid fa-bars text-2xl text-white"></i></div>
-                <span class="text-xs font-bold tracking-wider text-pink-300 mt-1">MENU</span>
-            </button>
-            <button onclick="bukaKategoriView('game')" class="flex flex-col items-center text-purple-200 hover:text-white transition group py-1 px-2">
-                <div class="bg-purple-800 group-hover:bg-purple-700 p-2 rounded-xl mb-1 transition"><i class="fa-solid fa-gamepad text-lg text-purple-300"></i></div>
-                <span class="text-[11px] font-semibold tracking-wide">GAME</span>
-            </button>
-            <button onclick="bukaKategoriView('aplikasi')" class="flex flex-col items-center text-purple-200 hover:text-white transition group py-1 px-2">
-                <div class="bg-purple-800 group-hover:bg-purple-700 p-2 rounded-xl mb-1 transition"><i class="fa-solid fa-layer-group text-lg text-purple-300"></i></div>
-                <span class="text-[11px] font-semibold tracking-wide">APLIKASI</span>
-            </button>
-        </div>
+    <div class="progress-container">
+      <div class="progress-bar"></div>
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="gift-icon">🎁</div>
     </div>
-
-    <!-- TOMBOL LIVE CHAT -->
-    <a href="#" id="floating-live-chat-btn" target="_blank" class="fixed right-5 bottom-32 z-40 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition transform hover:scale-110 active:scale-95 group hidden" title="Live Chat">
-        <i class="fa-solid fa-headset text-2xl"></i>
-    </a>
-
-    <!-- MODAL-MODAL SISTEM -->
-    <div id="custom-alert-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
-            <div id="alert-icon-wrapper" class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 text-purple-700 text-2xl"><i id="alert-icon-class" class="fa-solid fa-circle-exclamation"></i></div>
-            <h3 id="alert-title" class="text-xl font-bold text-gray-900 mb-2">Pemberitahuan</h3>
-            <p id="alert-message" class="text-xs text-gray-600 mb-6 whitespace-pre-line leading-relaxed">Pesan...</p>
-            <button onclick="tutupCustomAlert()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-2.5 rounded-xl text-sm transition">OK</button>
+    <div class="promo-box">
+      <div class="text-sm">Isi data untuk dapat cashback s.d <b>Rp20.000</b> & hadiah ekstra</div>
+      <div class="inner-white">
+        <div class="left">
+          <h4>Khusus Pengguna Baru hari ini</h4>
+          <div class="percent">0,01% <span>Bunga Harian</span></div>
         </div>
+        <div class="right">Hadiah Ekstra</div>
+      </div>
     </div>
-
-    <div id="profil-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
-            <button onclick="tutupModalProfil()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
-            <div class="text-center mb-6">
-                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2 text-purple-700 text-2xl"><i class="fa-solid fa-user-circle"></i></div>
-                <h3 id="profil-nama" class="text-xl font-bold text-purple-900">Nama</h3>
-                <p id="profil-email" class="text-xs text-gray-500">email</p>
+    <div class="ktp-card">
+      <div class="limit-info">
+        <div class="icon">🔍</div>
+        Perkiraan limit pinjaman Anda: s/d 100 Juta
+      </div>
+      <div class="ktp-title">Unggah foto KTP Anda yang jelas dan lengkap</div>
+      <div class="upload-area">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+        <div class="mock-ktp">
+          <div style="font-weight: bold; margin-bottom: 5px;">PROVINSI DAERAH ISTIMEWA YOGYAKARTA</div>
+          <div style="font-weight: bold; margin-bottom: 10px;">KABUPATEN SLEMAN</div>
+          <div style="display: flex; width: 100%; padding: 0 15px; justify-content: space-between;">
+            <div style="text-align: left; line-height: 1.4;">
+              <div>NIK : 360328******70006</div>
+              <div>Nama : JOHN DOE</div>
+              <div>Tempat/Tgl Lahir : JAKARTA, DD-MM-YYYY</div>
+              <div>Jenis Kelamin : LAKI-LAKI</div>
             </div>
-            <div class="bg-purple-50 p-4 rounded-xl mb-4 text-center">
-                <span class="text-xs font-bold text-purple-800 uppercase">Saldo Aktif</span>
-                <div id="profil-saldo" class="text-2xl font-extrabold text-purple-900 mt-1">Rp 0</div>
-            </div>
-            <button onclick="tutupModalProfil()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-2.5 rounded-lg text-sm transition">Tutup</button>
+            <div style="background: #a5d6a7; width: 40px; height: 50px; border: 1px solid #81c784; display: flex; align-items: center; justify-content: center; font-size: 18px;">👩</div>
+          </div>
         </div>
+      </div>
+      <div class="view-sample">Lihat Contoh</div>
+      <button class="btn-photo" onclick="selesaiUploadKTP()">Ambil Foto</button>
+      <div class="ojk-bottom">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        UangKu telah berizin dan diawasi oleh OJK.
+      </div>
     </div>
+  </div>
 
-    <!-- MODAL TOPUP QRIS (DUA TAHAP) -->
-    <div id="topup-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl relative overflow-hidden">
-            <button onclick="tutupModalTopUp()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold z-10">&times;</button>
-            <div class="bg-gradient-to-r from-orange-500 to-amber-500 text-white p-3.5 text-center text-xs font-bold shadow-sm">
-                Isi form deposit untuk mendapatkan barcode QRIS
-            </div>
-            <div id="topup-step-1" class="p-6">
-                <div class="mb-5">
-                    <label class="block text-xs font-bold text-gray-700 mb-2">Jumlah Deposit</label>
-                    <div class="flex items-center border border-gray-300 rounded-xl overflow-hidden focus-within:border-purple-600 bg-white shadow-inner">
-                        <span class="bg-orange-500 text-white font-bold px-3.5 py-2.5 text-sm">Rp</span>
-                        <input type="number" id="input-topup-nominal" placeholder="Rentang: 10,000 - 10,000,000" class="w-full p-2.5 text-sm focus:outline-none font-bold text-gray-800">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2.5 mb-6">
-                    <button type="button" onclick="pilihNominalCepat(10000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">10K</button>
-                    <button type="button" onclick="pilihNominalCepat(50000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">50K</button>
-                    <button type="button" onclick="pilihNominalCepat(100000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">100K</button>
-                    <button type="button" onclick="pilihNominalCepat(500000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">500K</button>
-                    <button type="button" onclick="pilihNominalCepat(1000000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">1M</button>
-                    <button type="button" onclick="pilihNominalCepat(2000000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">2M</button>
-                    <button type="button" onclick="pilihNominalCepat(5000000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">5M</button>
-                    <button type="button" onclick="pilihNominalCepat(10000000)" class="border border-gray-200 hover:border-orange-500 hover:bg-orange-50 text-gray-800 font-bold py-2.5 rounded-xl text-sm transition">10M</button>
-                </div>
-                <button onclick="lanjutKeQrCode()" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold py-3 rounded-xl transition shadow-md text-sm uppercase tracking-wider">Kirim</button>
-            </div>
-            <div id="topup-step-2" class="p-6 text-center hidden">
-                <h3 class="text-base font-bold text-gray-900 mb-1">Scan QRIS untuk Pembayaran</h3>
-                <p id="label-nominal-terpilih" class="text-xs font-extrabold text-orange-600 mb-3">Nominal: Rp 0</p>
-                <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 inline-block mb-3">
-                    <img id="qris-img-display" src="" alt="QRIS" class="w-48 h-48 mx-auto object-contain rounded-lg">
-                </div>
-                <div class="mb-4 bg-red-50 border border-red-200 rounded-lg p-2">
-                    <span class="text-xs text-red-600 font-bold">Batas Waktu:</span>
-                    <div id="qris-countdown" class="text-lg font-extrabold text-red-700">05:00</div>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="kembaliKeFormTopup()" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-xl text-xs">KEMBALI</button>
-                    <button onclick="prosesTopUpQRIS()" class="w-2/3 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-xs">SAYA SUDAH BAYAR</button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <div id="riwayat-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="tutupModalRiwayat()" class="absolute top-4 right-4 text-gray-400 text-xl font-bold">&times;</button>
-            <div class="text-center mb-4"><h3 class="text-xl font-bold text-purple-900"><i class="fa-solid fa-clock-rotate-left mr-2"></i> Riwayat Transaksi</h3></div>
-            <div id="riwayat-list-container" class="max-h-60 overflow-y-auto space-y-2 mb-4 text-left"><p class="text-gray-500 text-center py-4 text-sm">Belum ada riwayat.</p></div>
-            <button onclick="tutupModalRiwayat()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-2.5 rounded-lg text-sm">Tutup</button>
-        </div>
-    </div>
+<!-- SCRIPT LOGIKA APLIKASI & FIREBASE -->
+<script>
+  // 1. KONFIGURASI FIREBASE (Milik Anda)
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4Y18t3Vl0Fb1Bu4z1orCsbV8blVKN1iI",
+    authDomain: "uangku-f25f2.firebaseapp.com",
+    projectId: "uangku-f25f2",
+    storageBucket: "uangku-f25f2.firebasestorage.app",
+    messagingSenderId: "738403970054",
+    appId: "1:738403970054:web:7fc990d5c571c55c88a787"
+  };
 
-    <div id="saldo-kurang-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
-            <div class="bg-red-100 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600 text-2xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Saldo Tidak Cukup</h3>
-            <p class="text-xs text-gray-600 mb-6">Saldo Anda kurang untuk pembelian ini.</p>
-            <div class="flex gap-2">
-                <button onclick="tutupModalSaldoKurang()" class="flex-1 bg-gray-200 text-gray-800 font-bold py-2.5 rounded-xl text-sm">OK</button>
-                <button onclick="bukaTopupDariKurang()" class="flex-1 bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">Topup</button>
-            </div>
-        </div>
-    </div>
+  // 2. INISIALISASI FIREBASE
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore(); 
 
-    <!-- PANEL ADMIN -->
-    <div id="admin-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-purple-900 text-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="tutupPanelAdmin()" class="absolute top-4 right-4 text-purple-300 hover:text-white text-2xl font-bold">&times;</button>
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-purple-200"><i class="fa-solid fa-user-gear mr-2"></i> Panel Admin Toko</h2>
-                <p class="text-purple-300 mt-1 text-sm">Kelola Logo, QRIS, Banner, Keunggulan Fitur, dan Produk secara real-time</p>
-            </div>
+  // 3. KONFIGURASI EMAILJS
+  const EMAILJS_SERVICE_ID = "service_tqdtjlq";
+  const EMAILJS_TEMPLATE_ID = "template_d1wdsoc";
 
-            <div class="bg-purple-800 p-5 rounded-xl shadow border border-purple-700 mb-6">
-                <h3 class="text-lg font-bold mb-3 text-purple-200 border-b border-purple-700 pb-2">Pengaturan Logo & QRIS</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs uppercase font-bold text-purple-300 mb-1">URL Logo Toko</label>
-                        <input type="text" id="admin-input-logo" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white mb-2">
-                        <button onclick="ubahLogoToko()" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-2 rounded-lg text-xs">Simpan Logo</button>
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase font-bold text-purple-300 mb-1">URL QRIS Topup</label>
-                        <input type="text" id="admin-input-qris" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white mb-2">
-                        <button onclick="ubahQrisToko()" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-2 rounded-lg text-xs">Simpan QRIS</button>
-                    </div>
-                </div>
-            </div>
+  let generatedOtp = "";
+  let hitungMundur;
+  let sisaWaktu = 60; 
+  let currentUser = localStorage.getItem('uangku_current_user');
 
-            <div class="bg-purple-800 p-5 rounded-xl shadow border border-purple-700 mb-6">
-                <h3 class="text-lg font-bold mb-3 text-purple-200 border-b border-purple-700 pb-2">Pengaturan 4 Ikon Fitur Keunggulan</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    <div><label class="block text-xs uppercase font-bold text-purple-300 mb-1">Ikon 1</label><input type="text" id="admin-fitur-0" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                    <div><label class="block text-xs uppercase font-bold text-purple-300 mb-1">Ikon 2</label><input type="text" id="admin-fitur-1" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                    <div><label class="block text-xs uppercase font-bold text-purple-300 mb-1">Ikon 3</label><input type="text" id="admin-fitur-2" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                    <div><label class="block text-xs uppercase font-bold text-purple-300 mb-1">Ikon 4</label><input type="text" id="admin-fitur-3" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                </div>
-                <button onclick="ubahFiturIcons()" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-2 rounded-lg text-xs">Simpan Ikon Fitur</button>
-            </div>
+  document.addEventListener("DOMContentLoaded", function() {
+    updateTampilanHome();
+  });
 
-            <div class="bg-purple-800 p-5 rounded-xl shadow border border-purple-700 mb-6">
-                <h3 class="text-lg font-bold mb-3 text-purple-200 border-b border-purple-700 pb-2">Pengaturan 3 Banner Slider</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                    <div><input type="text" id="admin-banner-0" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                    <div><input type="text" id="admin-banner-1" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                    <div><input type="text" id="admin-banner-2" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                </div>
-                <button onclick="ubahBanners()" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-2 rounded-lg text-xs">Simpan Banner Slider</button>
-            </div>
+  function updateTampilanHome() {
+    let btnCek = document.getElementById('btn-cek-limit');
+    let greeting = document.getElementById('user-greeting');
+    let greetingEmail = document.getElementById('greeting-email');
 
-            <div class="bg-purple-800 p-5 rounded-xl shadow border border-purple-700">
-                <h3 class="text-lg font-bold mb-3 text-purple-200 border-b border-purple-700 pb-2">Tambah Item Produk Baru & Variasi Nominal</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-                    <div>
-                        <label class="block text-xs uppercase font-bold text-purple-300 mb-1">Pilih Kategori</label>
-                        <select id="select-kategori-produk" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white">
-                            <option value="e-wallet">E-WALLET</option><option value="pulsa">PULSA</option><option value="game">GAME</option><option value="aplikasi">APLIKASI</option>
-                        </select>
-                    </div>
-                    <div><label class="block text-xs uppercase font-bold text-purple-300 mb-1">Nama Item</label><input type="text" id="input-nama-produk" placeholder="Roblox Robux" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                    <div><label class="block text-xs uppercase font-bold text-purple-300 mb-1">URL Gambar</label><input type="text" id="input-gambar-produk" placeholder="https://..." class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white"></div>
-                </div>
-                <div class="mb-3">
-                    <label class="block text-xs uppercase font-bold text-purple-300 mb-1">Format Label & Harga (Contoh: 100 ROBUX:10000, 200 ROBUX:20000)</label>
-                    <input type="text" id="input-nominals-produk" placeholder="100 ROBUX:10000, 200 ROBUX:20000" class="w-full bg-purple-900 border border-purple-600 rounded-lg p-2 text-sm text-white font-bold">
-                </div>
-                <button onclick="tambahProduk()" class="w-full bg-pink-600 hover:bg-pink-500 font-bold py-2.5 rounded-lg text-sm">Simpan Item Baru</button>
-            </div>
-        </div>
-    </div>
+    if (currentUser) {
+      btnCek.style.display = 'none'; 
+      greeting.style.display = 'block'; 
+      greetingEmail.innerText = currentUser;
+    } else {
+      btnCek.style.display = 'block';
+      greeting.style.display = 'none';
+    }
+  }
 
-    <!-- MODAL LOGIN & DAFTAR -->
-    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
-            <button onclick="tutupModalLogin()" class="absolute top-4 right-4 text-gray-400 text-xl font-bold">&times;</button>
-            <div class="text-center mb-6"><h3 class="text-2xl font-bold text-purple-900">Masuk Akun</h3></div>
-            <form onsubmit="prosesLogin(event)" class="space-y-4">
-                <div><label class="block text-xs font-bold text-purple-900 mb-1">Email</label><input type="email" id="login-email" required class="w-full border rounded-lg p-2.5 text-sm"></div>
-                <div><label class="block text-xs font-bold text-purple-900 mb-1">Password</label><input type="password" id="login-password" required class="w-full border rounded-lg p-2.5 text-sm"></div>
-                <button type="submit" class="w-full bg-purple-700 text-white font-bold py-3 rounded-lg text-sm">LOGIN</button>
-            </form>
-            <p class="text-center text-xs text-gray-500 mt-4">Belum punya akun? <button onclick="alihKeDaftar()" class="text-purple-600 font-bold underline">Daftar</button></p>
-        </div>
-    </div>
+  function bukaLogin() {
+    document.getElementById('home-page').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('otp-section').style.display = 'block'; 
+    document.getElementById('userEmail').value = "";
+    document.getElementById('userPassword').value = "";
+    document.getElementById('kodeOtp').value = "";
+    window.scrollTo(0, 0);
+  }
 
-    <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl relative">
-            <button onclick="tutupModalDaftar()" class="absolute top-4 right-4 text-gray-400 text-xl font-bold">&times;</button>
-            <div class="text-center mb-6"><h3 class="text-2xl font-bold text-purple-900">Daftar Akun Baru</h3></div>
-            <form onsubmit="prosesDaftar(event)" class="space-y-4">
-                <div><label class="block text-xs font-bold text-purple-900 mb-1">Nama Lengkap</label><input type="text" id="reg-nama" required class="w-full border rounded-lg p-2.5 text-sm"></div>
-                <div><label class="block text-xs font-bold text-purple-900 mb-1">Email</label><input type="email" id="reg-email" required class="w-full border rounded-lg p-2.5 text-sm"></div>
-                <div><label class="block text-xs font-bold text-purple-900 mb-1">Password</label><input type="password" id="reg-password" required class="w-full border rounded-lg p-2.5 text-sm"></div>
-                <button type="submit" class="w-full bg-purple-700 text-white font-bold py-3 rounded-lg text-sm">DAFTAR</button>
-            </form>
-            <p class="text-center text-xs text-gray-500 mt-4">Sudah punya akun? <button onclick="alihKeLogin()" class="text-purple-600 font-bold underline">Login</button></p>
-        </div>
-    </div>
+  // --- CEK EMAIL DI DATABASE FIREBASE ---
+  async function cekStatusEmail() {
+    let email = document.getElementById('userEmail').value;
+    let otpSection = document.getElementById('otp-section');
 
-    <!-- START OF TEXT (LIVECHATINC) CODE -->
-    <script>
-        window.__lc = window.__lc || {};
-        window.__lc.organizationId = "8f6a734d-8034-4c18-9570-b0e695d62b59";
-        window.__lc.integration_name = "manual_onboarding";
-        window.__lc.product_name = "text";
-        ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[LiveChatWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.livechatinc.com/tracking.js",t.head.appendChild(n)}};!n.__lc.asyncInit&&e.init(),n.LiveChatWidget=n.LiveChatWidget||e}(window,document,[].slice))
-    </script>
-    <noscript><a href="https://www.text.com/chat-with-ai-agent/8f6a734d-8034-4c18-9570-b0e695d62b59/" rel="nofollow">Chat with AI Agent</a>, powered by <a href="https://www.text.com/" rel="noopener nofollow" target="_blank">Text</a></noscript>
-    <!-- END OF TEXT CODE -->
+    if (!email || !email.includes('@')) return;
 
-    <!-- SCRIPT JAVASCRIPT & FIREBASE CONFIG -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBUesQ1Ei23zsO0pBFuqI2VunBT4lmWlEA",
-            authDomain: "tokormd.firebaseapp.com",
-            projectId: "tokormd",
-            storageBucket: "tokormd.firebasestorage.app",
-            messagingSenderId: "1082449248040",
-            appId: "1:1082449248040:web:1fb8cb78e1f1d883ca9a1d",
-            measurementId: "G-D0LRRJNMV9"
-        };
+    try {
+      const docRef = db.collection("users").doc(email);
+      const docSnap = await docRef.get();
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+      if (docSnap.exists) {
+        otpSection.style.display = 'none'; 
+      } else {
+        otpSection.style.display = 'block'; 
+      }
+    } catch (error) {
+      console.log("Error cek Firebase:", error);
+    }
+  }
 
-        let dbToko = {
-            logoUrl: "",
-            qrisUrl: "",
-            banners: [
-                "https://images.unsplash.com/photo-1607532943733-bd0501861ad9?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1556742049-0a67d553c2a5?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1000&q=80"
-            ],
-            fiturIcons: [
-                "https://api.iconify.design/lucide:badge-percent.svg?color=%2316a34a",
-                "https://api.iconify.design/lucide:zap.svg?color=%2316a34a",
-                "https://api.iconify.design/lucide:headphones.svg?color=%2316a34a",
-                "https://api.iconify.design/lucide:shield-check.svg?color=%2316a34a"
-            ],
-            produk: [
-                { id: 1, kategori: 'game', nama: 'Roblox Robux', gambar: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80', nominals: [{ label: "100 ROBUX", harga: 10000 }, { label: "200 ROBUX", harga: 20000 }, { label: "500 ROBUX", harga: 50000 }] },
-                { id: 2, kategori: 'e-wallet', nama: 'Dana', gambar: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=500&q=80', nominals: [{ label: "SALDO 50K", harga: 50000 }, { label: "SALDO 100K", harga: 100000 }] }
-            ]
-        };
+  function kirimOtp() {
+    let email = document.getElementById('userEmail').value;
+    let btn = document.getElementById('btnKirimOtp');
 
-        let userAktif = null, countdownTimer = null, kategoriAktif = 'e-wallet', produkDipilih = null, nominalTerpilih = null, currentSliderIndex = 0, sliderInterval = null, nominalTopupTemp = 0;
+    if (!email || !email.includes('@')) {
+      alert("Masukkan alamat email yang valid terlebih dahulu!");
+      return;
+    }
 
-        function showCustomAlert(judul, pesan) {
-            document.getElementById('alert-title').innerText = judul;
-            document.getElementById('alert-message').innerText = pesan;
-            document.getElementById('custom-alert-modal').classList.remove('hidden');
+    generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("OTP (Cek Console):", generatedOtp);
+
+    let templateParams = { to_email: email, otp_code: generatedOtp };
+    
+    btn.innerText = "Mengirim...";
+    btn.disabled = true;
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+      .then(function(response) {
+          alert("Kode OTP berhasil dikirim ke email Anda!");
+          mulaiHitungMundur(); 
+      }, function(error) {
+          alert("Gagal mengirim email. Periksa koneksi Anda.");
+          btn.innerText = "Kirim OTP";
+          btn.disabled = false;
+      });
+  }
+
+  function mulaiHitungMundur() {
+    let btn = document.getElementById('btnKirimOtp');
+    btn.disabled = true;
+    sisaWaktu = 60;
+
+    hitungMundur = setInterval(function() {
+      sisaWaktu--;
+      btn.innerText = `Tunggu (${sisaWaktu}s)`;
+
+      if (sisaWaktu <= 0) {
+        clearInterval(hitungMundur);
+        btn.innerText = "Kirim Ulang";
+        btn.disabled = false;
+      }
+    }, 1000);
+  }
+
+  // --- PROSES LOGIN / DAFTAR DENGAN FIREBASE ---
+  async function prosesLogin() {
+    let email = document.getElementById('userEmail').value;
+    let password = document.getElementById('userPassword').value;
+    let otpInput = document.getElementById('kodeOtp').value;
+    let cb1 = document.getElementById('cb1').checked;
+    let cb2 = document.getElementById('cb2').checked;
+    let cb3 = document.getElementById('cb3').checked;
+    let btn = document.getElementById('btnSubmit');
+
+    if (!email || !email.includes('@') || !password) {
+      alert("Harap isi Email dan Password dengan benar!");
+      return;
+    }
+
+    if (!cb1 || !cb2 || !cb3) {
+      alert("Anda harus menyetujui semua syarat dan ketentuan!");
+      return;
+    }
+
+    btn.innerText = "Memproses...";
+    btn.disabled = true;
+
+    try {
+      const docRef = db.collection("users").doc(email);
+      const docSnap = await docRef.get();
+
+      // SKENARIO 1: USER LAMA
+      if (docSnap.exists) {
+        let dataUser = docSnap.data();
+        if (dataUser.password === btoa(password)) {
+          localStorage.setItem('uangku_current_user', email);
+          currentUser = email;
+          alert("Login Berhasil! Mengarahkan ke Dashboard...");
+          kembaliKeHome(); 
+        } else {
+          alert("Password salah! Silakan coba lagi.");
         }
-        function tutupCustomAlert() { document.getElementById('custom-alert-modal').classList.add('hidden'); }
-
-        function getDatabaseUser() {
-            let data = localStorage.getItem('rmdshop_users');
-            if (!data) {
-                let defaultUsers = [{ nama: "Admin RMD", email: "admin@rmdshop.com", password: "admin123", saldo: 1000000, riwayat: [] }];
-                localStorage.setItem('rmdshop_users', JSON.stringify(defaultUsers));
-                return defaultUsers;
-            }
-            return JSON.parse(data);
+      } 
+      // SKENARIO 2: USER BARU
+      else {
+        if (otpInput === generatedOtp && generatedOtp !== "") {
+          await docRef.set({
+            email: email,
+            password: btoa(password), 
+            createdAt: new Date().toISOString()
+          });
+          
+          localStorage.setItem('uangku_current_user', email);
+          currentUser = email;
+          alert("Pendaftaran Berhasil! Silakan lengkapi data KTP Anda.");
+          pindahKeKTP(); 
+        } else {
+          alert("Kode OTP salah atau belum diminta!");
         }
-        function saveDatabaseUser(users) { localStorage.setItem('rmdshop_users', JSON.stringify(users)); }
+      }
+    } catch (error) {
+      console.error("Error Firebase:", error);
+      // MENGUBAH ALERT AGAR ERROR ASLINYA MUNCUL
+      alert("Error Sistem: " + error.message); 
+    } finally {
+      btn.innerText = "Masuk / Daftar";
+      btn.disabled = false;
+    }
+  }
 
-        function muatDataRealtime() {
-            db.collection("toko").doc("setting").onSnapshot((doc) => {
-                if (doc.exists) {
-                    let data = doc.data();
-                    if (data.logoUrl !== undefined) dbToko.logoUrl = data.logoUrl;
-                    if (data.qrisUrl !== undefined) dbToko.qrisUrl = data.qrisUrl;
-                    if (data.banners) dbToko.banners = data.banners;
-                    if (data.fiturIcons) dbToko.fiturIcons = data.fiturIcons;
-                    if (data.produk) dbToko.produk = data.produk;
-                } else {
-                    db.collection("toko").doc("setting").set(dbToko);
-                }
-                applyLogoBranding();
-                applyBanners();
-                applyFiturIcons();
-                if (!document.getElementById('view-kategori-detail').classList.contains('hidden')) {
-                    renderProdukKategoriDetail();
-                }
-            });
-        }
+  function pindahKeKTP() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('ktp-page').style.display = 'flex';
+    window.scrollTo(0, 0);
+  }
 
-        function simpanKeDatabaseServer() {
-            db.collection("toko").doc("setting").set({
-                logoUrl: dbToko.logoUrl, qrisUrl: dbToko.qrisUrl, banners: dbToko.banners, fiturIcons: dbToko.fiturIcons, produk: dbToko.produk
-            }).then(() => { showCustomAlert("Sukses", "Perubahan berhasil disimpan ke server!"); });
-        }
+  function selesaiUploadKTP() {
+    alert("Data KTP berhasil disimpan! Selamat datang di Dashboard.");
+    kembaliKeHome(); 
+  }
 
-        window.onload = function() {
-            muatDataRealtime();
-            startAutoSlider();
-            let activeSession = localStorage.getItem('rmdshop_active_user');
-            if (activeSession) {
-                let users = getDatabaseUser();
-                userAktif = users.find(u => u.email === activeSession) || null;
-            }
-            cekStatusAuth();
-        };
+  function kembaliKeHome() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('ktp-page').style.display = 'none';
+    document.getElementById('home-page').style.display = 'block';
+    window.scrollTo(0, 0);
+    updateTampilanHome(); 
+  }
 
-        function applyBanners() {
-            for (let i = 0; i < 3; i++) {
-                let imgEl = document.getElementById(`banner-img-${i}`);
-                if (imgEl && dbToko.banners[i]) imgEl.src = dbToko.banners[i];
-            }
-        }
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
 
-        function applyFiturIcons() {
-            for (let i = 0; i < 4; i++) {
-                let iconEl = document.getElementById(`fitur-img-${i}`);
-                if (iconEl && dbToko.fiturIcons && dbToko.fiturIcons[i]) {
-                    iconEl.src = dbToko.fiturIcons[i];
-                }
-            }
-        }
-
-        function updateSliderView() {
-            let track = document.getElementById('slider-track');
-            if (track) track.style.transform = `translateX(-${currentSliderIndex * 100}%)`;
-            for (let i = 0; i < 3; i++) {
-                let dot = document.getElementById(`dot-${i}`);
-                if (dot) {
-                    if (i === currentSliderIndex) { dot.classList.remove('opacity-50'); dot.classList.add('opacity-90'); }
-                    else { dot.classList.remove('opacity-90'); dot.classList.add('opacity-50'); }
-                }
-            }
-        }
-
-        function geserSlider(direction) {
-            currentSliderIndex = (currentSliderIndex + direction + 3) % 3;
-            updateSliderView();
-            resetAutoSlider();
-        }
-
-        function setSliderIndex(index) {
-            currentSliderIndex = index;
-            updateSliderView();
-            resetAutoSlider();
-        }
-
-        function startAutoSlider() {
-            if (sliderInterval) clearInterval(sliderInterval);
-            sliderInterval = setInterval(() => {
-                currentSliderIndex = (currentSliderIndex + 1) % 3;
-                updateSliderView();
-            }, 4000);
-        }
-
-        function resetAutoSlider() { clearInterval(sliderInterval); startAutoSlider(); }
-
-        function ubahBanners() {
-            let b0 = document.getElementById('admin-banner-0').value.trim();
-            let b1 = document.getElementById('admin-banner-1').value.trim();
-            let b2 = document.getElementById('admin-banner-2').value.trim();
-            if (b0) dbToko.banners[0] = b0;
-            if (b1) dbToko.banners[1] = b1;
-            if (b2) dbToko.banners[2] = b2;
-            simpanKeDatabaseServer();
-            applyBanners();
-        }
-
-        function ubahFiturIcons() {
-            let f0 = document.getElementById('admin-fitur-0').value.trim();
-            let f1 = document.getElementById('admin-fitur-1').value.trim();
-            let f2 = document.getElementById('admin-fitur-2').value.trim();
-            let f3 = document.getElementById('admin-fitur-3').value.trim();
-            if (!dbToko.fiturIcons) dbToko.fiturIcons = ["", "", "", ""];
-            if (f0) dbToko.fiturIcons[0] = f0;
-            if (f1) dbToko.fiturIcons[1] = f1;
-            if (f2) dbToko.fiturIcons[2] = f2;
-            if (f3) dbToko.fiturIcons[3] = f3;
-            simpanKeDatabaseServer();
-            applyFiturIcons();
-        }
-
-        function tampilkanBeranda() {
-            document.getElementById('view-beranda').classList.remove('hidden');
-            document.getElementById('view-kategori-detail').classList.add('hidden');
-            document.getElementById('view-detail-produk').classList.add('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function bukaKategoriView(kategori) {
-            kategoriAktif = kategori;
-            document.getElementById('view-beranda').classList.add('hidden');
-            document.getElementById('view-kategori-detail').classList.remove('hidden');
-            document.getElementById('view-detail-produk').classList.add('hidden');
-            document.getElementById('detail-kat-title').innerText = kategori.toUpperCase();
-            renderProdukKategoriDetail();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function renderProdukKategoriDetail() {
-            let grid = document.getElementById('detail-produk-grid');
-            let searchQuery = document.getElementById('search-kategori-input').value.toLowerCase();
-            grid.innerHTML = "";
-            let filtered = dbToko.produk.filter(p => p.kategori === kategoriAktif && p.nama.toLowerCase().includes(searchQuery));
-            if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500 text-sm">Tidak ada produk ditemukan.</div>`; return; }
-            let isAdmin = (userAktif && userAktif.email === "admin@rmdshop.com");
-            filtered.forEach(prod => {
-                let tombolHapusHtml = isAdmin ? `<button onclick="hapusProduk(${prod.id})" class="absolute top-2 right-2 bg-red-100 text-red-600 p-1.5 rounded-lg text-xs z-10"><i class="fa-solid fa-trash"></i></button>` : '';
-                grid.innerHTML += `
-                    <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-col items-center text-center relative border border-purple-100">
-                        ${tombolHapusHtml}
-                        <div class="w-24 h-24 bg-purple-50 rounded-xl overflow-hidden mb-3 p-2 flex items-center justify-center"><img src="${prod.gambar}" class="w-full h-full object-cover rounded-lg"></div>
-                        <h4 class="font-bold text-gray-800 text-sm mb-3">${prod.nama}</h4>
-                        <button onclick="pilihProdukLihat(${prod.id})" class="mt-auto w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-xl text-xs transition">LIHAT</button>
-                    </div>`;
-            });
-        }
-
-        function pilihProdukLihat(id) {
-            produkDipilih = dbToko.produk.find(p => p.id === id);
-            if (!produkDipilih) return;
-            document.getElementById('view-kategori-detail').classList.add('hidden');
-            document.getElementById('view-detail-produk').classList.remove('hidden');
-            document.getElementById('transaksi-produk-img').src = produkDipilih.gambar;
-            document.getElementById('transaksi-produk-nama').innerText = produkDipilih.nama;
-            document.getElementById('input-target-tujuan').value = "";
-            document.getElementById('input-wa-konfirmasi').value = "";
-            document.getElementById('label-saldo-utama').innerText = "Rp " + (userAktif ? userAktif.saldo : 0).toLocaleString();
-            nominalTerpilih = null;
-            document.getElementById('summary-nominal').innerText = "-";
-            document.getElementById('summary-total').innerText = "Rp 0";
-            renderNominalBoxes();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function renderNominalBoxes() {
-            let container = document.getElementById('nominal-grid-container');
-            container.innerHTML = "";
-            if (!produkDipilih.nominals) return;
-            produkDipilih.nominals.forEach((nom) => {
-                let isSelected = (nominalTerpilih && nominalTerpilih.harga === nom.harga);
-                let activeClass = isSelected ? 'bg-purple-700 text-white ring-2 ring-purple-400 shadow-md' : 'bg-purple-50 hover:bg-purple-100 text-purple-900 border-purple-200';
-                container.innerHTML += `
-                    <button type="button" onclick='pilihNominal(${JSON.stringify(nom)})' class="border ${activeClass} font-bold py-3 px-3 rounded-xl text-sm transition text-center flex flex-col items-center justify-center">
-                        <span class="text-xs uppercase font-extrabold">${nom.label}</span>
-                        <span class="text-xs font-semibold mt-1">Rp ${nom.harga.toLocaleString()}</span>
-                    </button>`;
-            });
-        }
-
-        function pilihNominal(objNominal) {
-            nominalTerpilih = objNominal;
-            renderNominalBoxes();
-            document.getElementById('summary-nominal').innerText = `${objNominal.label} (Rp ${objNominal.harga.toLocaleString()})`;
-            document.getElementById('summary-total').innerText = "Rp " + objNominal.harga.toLocaleString();
-        }
-
-        function eksekusiBeliSekarang() {
-            if (!userAktif) { showCustomAlert("Perhatian", "Silahkan login terlebih dahulu!"); bukaModalLogin(); return; }
-            let targetTujuan = document.getElementById('input-target-tujuan').value.trim();
-            if (!targetTujuan) { showCustomAlert("Perhatian", "Masukkan Nomor Tujuan atau ID Akun!"); return; }
-            if (!nominalTerpilih) { showCustomAlert("Perhatian", "Pilih nominal terlebih dahulu!"); return; }
-            let nomorWa = document.getElementById('input-wa-konfirmasi').value.trim();
-            if (!nomorWa) { showCustomAlert("Perhatian", "Masukkan Nomor WhatsApp!"); return; }
-            let totalTagihan = nominalTerpilih.harga;
-            if (userAktif.saldo < totalTagihan) { document.getElementById('saldo-kurang-modal').classList.remove('hidden'); return; }
-
-            let users = getDatabaseUser();
-            let idx = users.findIndex(u => u.email === userAktif.email);
-            if (idx !== -1) {
-                users[idx].saldo -= totalTagihan;
-                users[idx].riwayat.unshift(`Beli ${produkDipilih.nama} - ${nominalTerpilih.label} (Rp ${totalTagihan.toLocaleString()}, Tujuan: ${targetTujuan}, WA: ${nomorWa}) - (${new Date().toLocaleString()})`);
-                saveDatabaseUser(users);
-                userAktif = users[idx];
-            }
-            cekStatusAuth();
-            showCustomAlert("Berhasil", `Pembelian berhasil! Saldo terpotong Rp ${totalTagihan.toLocaleString()}.`);
-            tampilkanBeranda();
-        }
-
-        function applyLogoBranding() {
-            let container = document.getElementById('logo-container');
-            if (dbToko.logoUrl) container.innerHTML = `<img src="${dbToko.logoUrl}" class="h-8 object-contain">`;
-            else container.innerHTML = `<i class="fa-solid fa-store text-purple-300"></i> RMD<span class="text-purple-300">SHOP</span>`;
-        }
-
-        function ubahLogoToko() {
-            let url = document.getElementById('admin-input-logo').value.trim();
-            if (!url) { showCustomAlert("Peringatan", "Masukkan URL logo!"); return; }
-            dbToko.logoUrl = url;
-            simpanKeDatabaseServer();
-            applyLogoBranding();
-        }
-
-        function ubahQrisToko() {
-            let url = document.getElementById('admin-input-qris').value.trim();
-            if (!url) { showCustomAlert("Peringatan", "Masukkan URL QRIS!"); return; }
-            dbToko.qrisUrl = url;
-            simpanKeDatabaseServer();
-        }
-
-        function tambahProduk() {
-            let kategori = document.getElementById('select-kategori-produk').value;
-            let namaProd = document.getElementById('input-nama-produk').value.trim();
-            let gambarProd = document.getElementById('input-gambar-produk').value.trim();
-            let nominalsStr = document.getElementById('input-nominals-produk').value.trim();
-            if (!namaProd || !gambarProd || !nominalsStr) { showCustomAlert("Peringatan", "Lengkapi semua data produk!"); return; }
-
-            let nominalsArr = [];
-            for (let part of nominalsStr.split(',')) {
-                let sub = part.split(':');
-                if (sub.length === 2) {
-                    let label = sub[0].trim(), harga = parseInt(sub[1].trim());
-                    if (label && !isNaN(harga) && harga > 0) nominalsArr.push({ label, harga });
-                }
-            }
-            if (nominalsArr.length === 0) { showCustomAlert("Format Salah", "Gunakan format Label:Harga, contoh: 100 ROBUX:10000"); return; }
-
-            dbToko.produk.push({ id: Date.now(), kategori, nama: namaProd, gambar: gambarProd, nominals: nominalsArr });
-            simpanKeDatabaseServer();
-            document.getElementById('input-nama-produk').value = "";
-            document.getElementById('input-gambar-produk').value = "";
-            document.getElementById('input-nominals-produk').value = "";
-            renderProdukKategoriDetail();
-        }
-
-        function hapusProduk(id) {
-            if (confirm("Yakin ingin menghapus item ini?")) {
-                dbToko.produk = dbToko.produk.filter(p => p.id !== id);
-                simpanKeDatabaseServer();
-                renderProdukKategoriDetail();
-            }
-        }
-
-        function bukaModalTopUp() {
-            if (!userAktif) { showCustomAlert("Perhatian", "Silahkan login terlebih dahulu!"); bukaModalLogin(); return; }
-            document.getElementById('input-topup-nominal').value = "";
-            nominalTopupTemp = 0;
-            document.getElementById('topup-step-1').classList.remove('hidden');
-            document.getElementById('topup-step-2').classList.add('hidden');
-            document.getElementById('topup-modal').classList.remove('hidden');
-            if (countdownTimer) clearInterval(countdownTimer);
-        }
-
-        function tutupModalTopUp() {
-            document.getElementById('topup-modal').classList.add('hidden');
-            if (countdownTimer) clearInterval(countdownTimer);
-        }
-
-        function pilihNominalCepat(nilai) {
-            nominalTopupTemp = nilai;
-            document.getElementById('input-topup-nominal').value = nilai;
-        }
-
-        function lanjutKeQrCode() {
-            let nominal = parseInt(document.getElementById('input-topup-nominal').value.trim());
-            if (isNaN(nominal) || nominal < 10000) { showCustomAlert("Peringatan", "Minimal deposit adalah Rp 10,000!"); return; }
-            if (nominal > 10000000) { showCustomAlert("Peringatan", "Maksimal deposit adalah Rp 10,000,000!"); return; }
-
-            nominalTopupTemp = nominal;
-            document.getElementById('label-nominal-terpilih').innerText = "Total Bayar: Rp " + nominalTopupTemp.toLocaleString();
-            document.getElementById('qris-img-display').src = dbToko.qrisUrl ? dbToko.qrisUrl : "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=RMDSHOP-" + nominalTopupTemp;
-
-            document.getElementById('topup-step-1').classList.add('hidden');
-            document.getElementById('topup-step-2').classList.remove('hidden');
-            mulaiHitungMundur(300);
-        }
-
-        function kembaliKeFormTopup() {
-            if (countdownTimer) clearInterval(countdownTimer);
-            document.getElementById('topup-step-2').classList.add('hidden');
-            document.getElementById('topup-step-1').classList.remove('hidden');
-        }
-
-        function mulaiHitungMundur(durasiDetik) {
-            if (countdownTimer) clearInterval(countdownTimer);
-            let timer = durasiDetik, display = document.getElementById('qris-countdown');
-            countdownTimer = setInterval(() => {
-                let m = String(Math.floor(timer / 60)).padStart(2, '0');
-                let s = String(timer % 60).padStart(2, '0');
-                display.innerText = m + ":" + s;
-                if (--timer < 0) { clearInterval(countdownTimer); display.innerText = "Waktu Habis!"; }
-            }, 1000);
-        }
-
-        function prosesTopUpQRIS() {
-            tutupModalTopUp();
-            let pesanPending = `TOPUP SEDANG DIPROSES\n\n` +
-                               `Nominal : Rp ${nominalTopupTemp.toLocaleString()}\n` +
-                               `Metode : QRIS\n` +
-                               `Status : PENDING\n\n` +
-                               `Silahkan tunggu 1-3 detik, jika kamu sudah transfer ke QRIS maka Saldo Akun akan langsung masuk. Silahkan refresh browser kamu`;
-
-            let users = getDatabaseUser();
-            let idx = users.findIndex(u => u.email === userAktif.email);
-            if (idx !== -1) {
-                users[idx].riwayat.unshift(`Top-Up QRIS Rp ${nominalTopupTemp.toLocaleString()} - PENDING (${new Date().toLocaleString()})`);
-                saveDatabaseUser(users);
-                userAktif = users[idx];
-            }
-            showCustomAlert("Informasi Topup", pesanPending);
-        }
-
-        function prosesDaftar(e) {
-            e.preventDefault();
-            let nama = document.getElementById('reg-nama').value.trim();
-            let email = document.getElementById('reg-email').value.trim();
-            let password = document.getElementById('reg-password').value.trim();
-            let users = getDatabaseUser();
-            if (users.some(u => u.email === email)) { showCustomAlert("Gagal", "Email sudah terdaftar!"); return; }
-            users.push({ nama, email, password, saldo: 0, riwayat: [] });
-            saveDatabaseUser(users);
-            showCustomAlert("Sukses", "Pendaftaran berhasil! Silahkan login.");
-            tutupModalDaftar();
-            bukaModalLogin();
-        }
-
-        function prosesLogin(e) {
-            e.preventDefault();
-            let email = document.getElementById('login-email').value.trim();
-            let password = document.getElementById('login-password').value.trim();
-            let users = getDatabaseUser();
-            let found = users.find(u => u.email === email && u.password === password);
-            if (!found) { showCustomAlert("Gagal", "Email atau password salah!"); return; }
-            userAktif = found;
-            localStorage.setItem('rmdshop_active_user', userAktif.email);
-            showCustomAlert("Sukses", "Berhasil Login!");
-            tutupModalLogin();
-            cekStatusAuth();
-        }
-
-        function logout() {
-            userAktif = null;
-            localStorage.removeItem('rmdshop_active_user');
-            tutupPanelAdmin();
-            showCustomAlert("Info", "Logout berhasil.");
-            cekStatusAuth();
-        }
-
-        function cekStatusAuth() {
-            let container = document.getElementById('auth-menu'), adminBtn = document.getElementById('nav-admin-btn'), dashboardCard = document.getElementById('user-dashboard-card'), guestBanner = document.getElementById('guest-banner'), dashboardMenuGrid = document.getElementById('dashboard-menu-grid');
-            if (userAktif) {
-                let users = getDatabaseUser();
-                userAktif = users.find(u => u.email === userAktif.email) || userAktif;
-                container.innerHTML = `<button onclick="logout()" class="bg-pink-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">LOGOUT</button>`;
-                dashboardCard.classList.remove('hidden');
-                guestBanner.classList.add('hidden');
-                document.getElementById('user-saldo-display').innerText = "Rp " + userAktif.saldo.toLocaleString();
-                if (userAktif.email === "admin@rmdshop.com") {
-                    if (adminBtn) { adminBtn.classList.remove('hidden'); adminBtn.classList.add('flex'); }
-                    dashboardMenuGrid.className = "grid grid-cols-4 gap-1.5 pt-2 border-t border-purple-700";
-                    dashboardMenuGrid.innerHTML = `
-                        <button onclick="bukaModalProfil()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-[11px] font-bold py-2 px-0.5 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-user text-sm"></i> PROFIL</button>
-                        <button onclick="bukaModalTopUp()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-[11px] font-bold py-2 px-0.5 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-wallet text-sm"></i> TOPUP</button>
-                        <button onclick="bukaModalRiwayat()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-[11px] font-bold py-2 px-0.5 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-clock-rotate-left text-sm"></i> RIWAYAT</button>
-                        <button onclick="bukaPanelAdmin()" class="bg-pink-700 hover:bg-pink-600 text-white text-[11px] font-bold py-2 px-0.5 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-user-gear text-sm"></i> ADMIN</button>
-                    `;
-                } else {
-                    if (adminBtn) { adminBtn.classList.add('hidden'); adminBtn.classList.remove('flex'); }
-                    dashboardMenuGrid.className = "grid grid-cols-3 gap-2 pt-2 border-t border-purple-700";
-                    dashboardMenuGrid.innerHTML = `
-                        <button onclick="bukaModalProfil()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-xs font-bold py-2 px-1 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-user text-sm"></i> PROFIL</button>
-                        <button onclick="bukaModalTopUp()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-xs font-bold py-2 px-1 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-wallet text-sm"></i> TOPUP</button>
-                        <button onclick="bukaModalRiwayat()" class="bg-purple-700 hover:bg-purple-600 text-purple-100 text-xs font-bold py-2 px-1 rounded-xl transition flex flex-col items-center gap-1"><i class="fa-solid fa-clock-rotate-left text-sm"></i> RIWAYAT</button>
-                    `;
-                }
-            } else {
-                container.innerHTML = `<button onclick="bukaModalLogin()" class="bg-purple-600 text-white px-3 py-2 rounded-lg text-xs font-bold">LOGIN</button><button onclick="bukaModalDaftar()" class="bg-white text-purple-800 px-3 py-2 rounded-lg text-xs font-bold ml-1">DAFTAR</button>`;
-                dashboardCard.classList.add('hidden');
-                guestBanner.classList.remove('hidden');
-                if (adminBtn) { adminBtn.classList.add('hidden'); adminBtn.classList.remove('flex'); }
-            }
-        }
-
-        function bukaModalProfil() {
-            if (!userAktif) { bukaModalLogin(); return; }
-            document.getElementById('profil-nama').innerText = userAktif.nama;
-            document.getElementById('profil-email').innerText = userAktif.email;
-            document.getElementById('profil-saldo').innerText = "Rp " + userAktif.saldo.toLocaleString();
-            document.getElementById('profil-modal').classList.remove('hidden');
-        }
-        function tutupModalProfil() { document.getElementById('profil-modal').classList.add('hidden'); }
-
-        function bukaModalRiwayat() {
-            if (!userAktif) { bukaModalLogin(); return; }
-            let container = document.getElementById('riwayat-list-container');
-            container.innerHTML = "";
-            if (!userAktif.riwayat || userAktif.riwayat.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 text-center py-4 text-sm">Belum ada riwayat transaksi.</p>`;
-            } else {
-                userAktif.riwayat.forEach(item => {
-                    container.innerHTML += `<div class="bg-purple-50 p-3 rounded-xl text-xs text-gray-700 border-l-4 border-purple-600 shadow-sm">${item}</div>`;
-                });
-            }
-            document.getElementById('riwayat-modal').classList.remove('hidden');
-        }
-        function tutupModalRiwayat() { document.getElementById('riwayat-modal').classList.add('hidden'); }
-
-        function tutupModalSaldoKurang() { document.getElementById('saldo-kurang-modal').classList.add('hidden'); }
-        function bukaTopupDariKurang() { tutupModalSaldoKurang(); bukaModalTopUp(); }
-        function bukaModalLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
-        function tutupModalLogin() { document.getElementById('login-modal').classList.add('hidden'); }
-        function bukaModalDaftar() { document.getElementById('register-modal').classList.remove('hidden'); }
-        function tutupModalDaftar() { document.getElementById('register-modal').classList.add('hidden'); }
-        function alihKeDaftar() { tutupModalLogin(); bukaModalDaftar(); }
-        function alihKeLogin() { tutupModalDaftar(); bukaModalLogin(); }
-
-        function bukaPanelAdmin() {
-            if (!userAktif || userAktif.email !== "admin@rmdshop.com") { showCustomAlert("Akses Ditolak", "Anda tidak memiliki izin mengakses panel admin!"); return; }
-            document.getElementById('admin-input-logo').value = dbToko.logoUrl;
-            document.getElementById('admin-input-qris').value = dbToko.qrisUrl;
-            document.getElementById('admin-banner-0').value = dbToko.banners[0];
-            document.getElementById('admin-banner-1').value = dbToko.banners[1];
-            document.getElementById('admin-banner-2').value = dbToko.banners[2];
-            if (dbToko.fiturIcons) {
-                document.getElementById('admin-fitur-0').value = dbToko.fiturIcons[0] || '';
-                document.getElementById('admin-fitur-1').value = dbToko.fiturIcons[1] || '';
-                document.getElementById('admin-fitur-2').value = dbToko.fiturIcons[2] || '';
-                document.getElementById('admin-fitur-3').value = dbToko.fiturIcons[3] || '';
-            }
-            document.getElementById('admin-modal').classList.remove('hidden');
-        }
-        function tutupPanelAdmin() { document.getElementById('admin-modal').classList.add('hidden'); }
-    </script>
 </body>
 </html>
