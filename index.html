@@ -12,12 +12,8 @@
   })();
 </script>
 
-<!-- Library Firebase Compat (Untuk HTML murni) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 <style>
-  /* CSS TETAP SAMA SEPERTI SEBELUMNYA */
+  /* Reset & Base Styles */
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   body { background-color: #f2f2f2; color: #333; display: flex; justify-content: center; overflow-x: hidden; }
   .app-container { width: 100%; max-width: 400px; background-color: #f2f2f2; position: relative; min-height: 100vh; overflow-x: hidden; }
@@ -27,7 +23,15 @@
   .header-bg { background: linear-gradient(135deg, #38d16a, #2eb85c); padding: 30px 20px 80px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
   .nav-header { display: flex; justify-content: space-between; align-items: center; color: white; }
   .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 22px; letter-spacing: 0.5px; }
-  .logo-icon { font-size: 26px; }
+  
+  /* CSS UNTUK LOGO GAMBAR */
+  .logo-img { 
+    height: 35px; 
+    width: auto; 
+    object-fit: contain; 
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); 
+  }
+
   .headset-icon { font-size: 24px; cursor: pointer; }
   .main-card { background: white; border-radius: 16px; margin: -60px 20px 20px 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; z-index: 10; }
   .promo-banner { background-color: #d4f8a4; color: #1a5310; padding: 8px 15px; border-radius: 0 0 20px 20px; font-size: 13px; display: inline-block; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-weight: 500; border: 1px solid #c3e890; border-top: none; }
@@ -65,11 +69,11 @@
   .nav-icon { width: 24px; height: 24px; fill: currentColor; transition: fill 0.3s; }
   .alfamart { color: #e31837; } .bri { color: #00529c; } .bnc { color: #333; font-family: serif; } .bni { color: #f15a22; } .ovo { color: #4c3494; }
 
-  /* LOGIN */
-  #login-page { display: none; background-color: #f4fbf4; min-height: 100vh; flex-direction: column; position: absolute; top: 0; left: 0; width: 100%; z-index: 200; }
-  .login-hero { background: linear-gradient(180deg, #e2f8e6 0%, #f4fbf4 100%); padding: 30px 20px 20px 20px; position: relative; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-  .login-hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(#e2f8e6 1px, transparent 1px), linear-gradient(90deg, #e2f8e6 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; z-index: 0; }
-  .login-title { position: relative; z-index: 1; color: #1c9b47; font-size: 18px; font-weight: 800; font-style: italic; margin-bottom: 25px; }
+  /* AUTH PAGE (LOGIN & DAFTAR) */
+  #auth-page { display: none; background-color: #f4fbf4; min-height: 100vh; flex-direction: column; position: absolute; top: 0; left: 0; width: 100%; z-index: 200; }
+  .auth-hero { background: linear-gradient(180deg, #e2f8e6 0%, #f4fbf4 100%); padding: 30px 20px 20px 20px; position: relative; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
+  .auth-hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(#e2f8e6 1px, transparent 1px), linear-gradient(90deg, #e2f8e6 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; z-index: 0; }
+  .auth-title { position: relative; z-index: 1; color: #1c9b47; font-size: 18px; font-weight: 800; font-style: italic; margin-bottom: 25px; }
   .illustration-container { position: relative; z-index: 1; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .banner-merah { background-color: #f1602f; color: white; font-weight: 800; font-size: 16px; padding: 8px 15px; border-radius: 8px; transform: rotate(-5deg); position: absolute; right: 10px; top: 20px; z-index: 2; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
   .banner-merah span { font-size: 10px; display: block; font-weight: 500; }
@@ -78,7 +82,11 @@
   .slider-dots { display: flex; justify-content: center; gap: 5px; margin-top: 15px; }
   .dot { width: 20px; height: 4px; background-color: #ccc; border-radius: 2px; }
   .dot.active { width: 30px; background-color: #555; }
-  .login-form-area { background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; margin-top: -20px; padding: 30px 20px; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 10; }
+
+  .auth-form-area { background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; margin-top: -20px; padding: 30px 20px; flex: 1; display: flex; flex-direction: column; position: relative; z-index: 10; }
+  .auth-tabs { display: flex; margin-bottom: 25px; border-bottom: 2px solid #eee; }
+  .auth-tab { flex: 1; text-align: center; padding: 10px; font-size: 16px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.3s; }
+  .auth-tab.active { color: #1c9b47; border-bottom: 3px solid #1c9b47; }
   .form-label { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 8px; display: block; }
   .input-group { display: flex; align-items: center; background-color: #f4f4f4; border-radius: 12px; padding: 0 15px; margin-bottom: 15px; border: 1px solid transparent; transition: border 0.3s; }
   .input-group:focus-within { border-color: #1c9b47; background-color: #fff; }
@@ -140,7 +148,11 @@
   <div id="home-page">
     <div class="header-bg">
       <div class="nav-header">
-        <div class="logo-area"><span class="logo-icon">💰</span> UangKu</div>
+        <!-- LOGO GAMBAR DARI GITHUB -->
+        <div class="logo-area">
+          <img src="logo.png" alt="Logo UangKu" class="logo-img">
+          UangKu
+        </div>
         <div class="headset-icon">🎧</div>
       </div>
       <div id="user-greeting" style="display: none; color: white; margin-top: 15px;">
@@ -153,7 +165,9 @@
       <div class="limit-title">Limit Pinjaman Hingga</div>
       <div class="limit-amount"><span>Rp</span> 100.000.000</div>
       <div class="limit-subtitle">Bunga mulai <span>0,01%</span> per hari, cicilan 1-12 bulan</div>
-      <button class="btn-cek" id="btn-cek-limit" onclick="bukaLogin()">Cek Limit</button>
+      
+      <button class="btn-cek" id="btn-action" onclick="handleTombolUtama()">Cek Limit</button>
+      
       <div class="ojk-badge">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         <b>UangKu</b> telah berizin dan diawasi oleh OJK
@@ -197,10 +211,10 @@
     </div>
   </div>
 
-  <!-- LOGIN -->
-  <div id="login-page">
-    <div class="login-hero">
-      <div class="login-title">Daftar dan Login untuk Nikmati</div>
+  <!-- AUTH PAGE -->
+  <div id="auth-page">
+    <div class="auth-hero">
+      <div class="auth-title">Daftar dan Login untuk Nikmati</div>
       <div class="illustration-container">
         <div class="banner-merah"><span>Pinjaman<br>hingga</span>100 JUTA</div>
         <div class="banner-hijau">0% Bunga</div>
@@ -209,48 +223,69 @@
       <div class="slider-dots"><div class="dot active"></div><div class="dot"></div></div>
     </div>
 
-    <div class="login-form-area">
-      <label class="form-label">Email</label>
-      <div class="input-group">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        <input type="email" placeholder="contoh@gmail.com" id="userEmail" oninput="cekStatusEmail()">
+    <div class="auth-form-area">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Masuk</div>
+        <div class="auth-tab" id="tab-daftar" onclick="switchTab('daftar')">Daftar</div>
       </div>
 
-      <label class="form-label">Password</label>
-      <div class="input-group">
-        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-        <input type="password" placeholder="Masukkan Password" id="userPassword">
+      <div id="form-login">
+        <label class="form-label">Email</label>
+        <div class="input-group">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <input type="email" placeholder="contoh@gmail.com" id="login-email">
+        </div>
+        <label class="form-label">Password</label>
+        <div class="input-group">
+          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+          <input type="password" placeholder="Masukkan Password" id="login-password">
+        </div>
+        <div class="checkbox-item" style="margin-bottom: 20px;">
+          <input type="checkbox" id="remember-me" style="border-radius: 50%;">
+          <span style="font-size: 13px; margin-top: -2px;">Ingat Saya</span>
+        </div>
+        <button class="btn-next" onclick="prosesLogin()" id="btnSubmitLogin">Masuk</button>
       </div>
 
-      <div id="otp-section">
+      <div id="form-daftar" style="display: none;">
+        <label class="form-label">Email</label>
+        <div class="input-group">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <input type="email" placeholder="contoh@gmail.com" id="register-email">
+        </div>
+        <label class="form-label">Password</label>
+        <div class="input-group">
+          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+          <input type="password" placeholder="Buat Password" id="register-password">
+        </div>
         <label class="form-label">Kode OTP</label>
         <div class="input-group" style="padding-right: 5px;">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-          <input type="text" placeholder="123456" id="kodeOtp" maxlength="6" style="letter-spacing: 2px;">
+          <input type="text" placeholder="123456" id="register-otp" maxlength="6" style="letter-spacing: 2px;">
           <button class="btn-otp-inline" id="btnKirimOtp" onclick="kirimOtp()">Kirim OTP</button>
         </div>
-      </div>
 
-      <button class="btn-next" onclick="prosesLogin()" id="btnSubmit">Masuk / Daftar</button>
+        <div class="terms-area">
+          <label class="checkbox-item">
+            <input type="checkbox" id="cb1">
+            <span>Saya telah membaca dan menyetujui <a href="#">Kebijakan Privasi</a>, <a href="#">Ketentuan Penggunaan</a> dan <a href="#">Otorisasi</a> dari UangKu</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="cb2">
+            <span>Saya setuju menerima informasi promosi dari UangKu (termasuk di luar jam kerja dan hari libur).</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="cb3">
+            <span>Saya setuju untuk menerima promosi dari bank mitra.</span>
+          </label>
+        </div>
+
+        <button class="btn-next" onclick="prosesDaftar()" id="btnSubmitDaftar" style="margin-top: 20px;">Daftar Sekarang</button>
+      </div>
 
       <div class="safe-text">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
         Data Anda aman bersama kami.
-      </div>
-
-      <div class="terms-area">
-        <label class="checkbox-item">
-          <input type="checkbox" id="cb1">
-          <span>Saya telah membaca dan menyetujui <a href="#">Kebijakan Privasi</a>, <a href="#">Ketentuan Penggunaan</a> dan <a href="#">Otorisasi</a> dari UangKu</span>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" id="cb2">
-          <span>Saya setuju menerima informasi promosi dari UangKu (termasuk di luar jam kerja dan hari libur).</span>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" id="cb3">
-          <span>Saya setuju untuk menerima promosi dari bank mitra.</span>
-        </label>
       </div>
     </div>
   </div>
@@ -258,7 +293,7 @@
   <!-- KTP -->
   <div id="ktp-page">
     <div class="ktp-header">
-      <div class="back-btn">&#8592;</div>
+      <div class="back-btn" onclick="kembaliKeHome()">&#8592;</div>
       <h2>KTP</h2>
       <div class="headset-icon" style="color: #2eb85c;">🎧</div>
     </div>
@@ -316,86 +351,102 @@
 
 </div>
 
-<!-- SCRIPT LOGIKA APLIKASI & FIREBASE -->
-<script>
-  // 1. KONFIGURASI FIREBASE
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, initializeFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
   const firebaseConfig = {
-    apiKey: "AIzaSyB4Y18t3Vl0Fb1Bu4z1orCsbV8blVKN1iI",
-    authDomain: "uangku-f25f2.firebaseapp.com",
-    projectId: "uangku-f25f2",
-    storageBucket: "uangku-f25f2.firebasestorage.app",
-    messagingSenderId: "738403970054",
-    appId: "1:738403970054:web:7fc990d5c571c55c88a787"
+    apiKey: "AIzaSyBmbLud-MLYWIG8FFAFOkE4rud-iRSKR9w",
+    authDomain: "uangku-9013e.firebaseapp.com",
+    projectId: "uangku-9013e",
+    storageBucket: "uangku-9013e.firebasestorage.app",
+    messagingSenderId: "581367901171",
+    appId: "1:581367901171:web:b4e67e5cda390998c58086"
   };
 
-  // 2. INISIALISASI FIREBASE
-  firebase.initializeApp(firebaseConfig);
-  
-  // PERBAIKAN: Menggunakan sintaks Compat untuk Long Polling
-  const db = firebase.firestore();
-  db.settings({ experimentalForceLongPolling: true });
+  const app = initializeApp(firebaseConfig);
+  let db;
+  try {
+    db = initializeFirestore(app, { experimentalForceLongPolling: true });
+  } catch (e) {
+    db = getFirestore(app);
+  }
 
-  // 3. KONFIGURASI EMAILJS
   const EMAILJS_SERVICE_ID = "service_tqdtjlq";
   const EMAILJS_TEMPLATE_ID = "template_d1wdsoc";
 
   let generatedOtp = "";
   let hitungMundur;
   let sisaWaktu = 60; 
+  
   let currentUser = localStorage.getItem('uangku_current_user');
+  let isKtpUploaded = localStorage.getItem('uangku_ktp_status') === 'true';
 
-  document.addEventListener("DOMContentLoaded", function() {
-    updateTampilanHome();
-  });
-
-  function updateTampilanHome() {
-    let btnCek = document.getElementById('btn-cek-limit');
+  // ==========================================
+  // FUNGSI UI
+  // ==========================================
+  window.updateTombolDashboard = function() {
+    let btnAction = document.getElementById('btn-action');
     let greeting = document.getElementById('user-greeting');
     let greetingEmail = document.getElementById('greeting-email');
 
     if (currentUser) {
-      btnCek.style.display = 'none'; 
       greeting.style.display = 'block'; 
       greetingEmail.innerText = currentUser;
+      btnAction.innerText = isKtpUploaded ? "Ajukan Pinjaman" : "Cek Limit";
     } else {
-      btnCek.style.display = 'block';
       greeting.style.display = 'none';
+      btnAction.innerText = "Cek Limit";
     }
-  }
+  };
 
-  function bukaLogin() {
-    document.getElementById('home-page').style.display = 'none';
-    document.getElementById('login-page').style.display = 'flex';
-    document.getElementById('otp-section').style.display = 'block'; 
-    document.getElementById('userEmail').value = "";
-    document.getElementById('userPassword').value = "";
-    document.getElementById('kodeOtp').value = "";
-    window.scrollTo(0, 0);
-  }
-
-  // --- CEK EMAIL DI DATABASE FIREBASE ---
-  async function cekStatusEmail() {
-    let email = document.getElementById('userEmail').value;
-    let otpSection = document.getElementById('otp-section');
-
-    if (!email || !email.includes('@')) return;
-
-    try {
-      const docRef = db.collection("users").doc(email);
-      const docSnap = await docRef.get();
-
-      if (docSnap.exists) {
-        otpSection.style.display = 'none'; 
+  window.handleTombolUtama = function() {
+    if (!currentUser) {
+      bukaAuth();
+    } else {
+      if (isKtpUploaded) {
+        alert("Fitur pengajuan pinjaman akan segera hadir!");
       } else {
-        otpSection.style.display = 'block'; 
+        pindahKeKTP();
       }
-    } catch (error) {
-      console.log("Error cek Firebase:", error);
     }
-  }
+  };
 
-  function kirimOtp() {
-    let email = document.getElementById('userEmail').value;
+  window.bukaAuth = function() {
+    document.getElementById('home-page').style.display = 'none';
+    document.getElementById('auth-page').style.display = 'flex';
+    
+    let savedEmail = localStorage.getItem('uangku_remember_email');
+    let savedPass = localStorage.getItem('uangku_remember_pass');
+    if (savedEmail && savedPass) {
+      document.getElementById('login-email').value = savedEmail;
+      document.getElementById('login-password').value = savedPass;
+      document.getElementById('remember-me').checked = true;
+    }
+
+    switchTab('login');
+    window.scrollTo(0, 0);
+  };
+
+  window.switchTab = function(tab) {
+    if (tab === 'login') {
+      document.getElementById('tab-login').classList.add('active');
+      document.getElementById('tab-daftar').classList.remove('active');
+      document.getElementById('form-login').style.display = 'block';
+      document.getElementById('form-daftar').style.display = 'none';
+    } else {
+      document.getElementById('tab-login').classList.remove('active');
+      document.getElementById('tab-daftar').classList.add('active');
+      document.getElementById('form-login').style.display = 'none';
+      document.getElementById('form-daftar').style.display = 'block';
+    }
+  };
+
+  // ==========================================
+  // LOGIKA DAFTAR (OTP)
+  // ==========================================
+  window.kirimOtp = async function() {
+    let email = document.getElementById('register-email').value;
     let btn = document.getElementById('btnKirimOtp');
 
     if (!email || !email.includes('@')) {
@@ -403,24 +454,41 @@
       return;
     }
 
-    generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log("OTP (Cek Console):", generatedOtp);
-
-    let templateParams = { to_email: email, otp_code: generatedOtp };
-    
-    btn.innerText = "Mengirim...";
+    btn.innerText = "Cek Email...";
     btn.disabled = true;
 
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-      .then(function(response) {
-          alert("Kode OTP berhasil dikirim ke email Anda!");
-          mulaiHitungMundur(); 
-      }, function(error) {
-          alert("Gagal mengirim email. Periksa koneksi Anda.");
-          btn.innerText = "Kirim OTP";
-          btn.disabled = false;
-      });
-  }
+    try {
+      const docRef = doc(db, "users", email);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        alert("Email ini sudah terdaftar. Silakan gunakan tab Masuk.");
+        btn.innerText = "Kirim OTP";
+        btn.disabled = false;
+        return;
+      }
+
+      generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      let templateParams = { to_email: email, otp_code: generatedOtp };
+      
+      btn.innerText = "Mengirim...";
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(function(response) {
+            alert("Kode OTP berhasil dikirim ke email Anda!");
+            mulaiHitungMundur(); 
+        }, function(error) {
+            alert("Gagal mengirim email. Periksa koneksi Anda.");
+            btn.innerText = "Kirim OTP";
+            btn.disabled = false;
+        });
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan sistem.");
+      btn.innerText = "Kirim OTP";
+      btn.disabled = false;
+    }
+  };
 
   function mulaiHitungMundur() {
     let btn = document.getElementById('btnKirimOtp');
@@ -439,23 +507,65 @@
     }, 1000);
   }
 
-  // --- PROSES LOGIN / DAFTAR DENGAN FIREBASE ---
-  async function prosesLogin() {
-    let email = document.getElementById('userEmail').value;
-    let password = document.getElementById('userPassword').value;
-    let otpInput = document.getElementById('kodeOtp').value;
+  window.prosesDaftar = async function() {
+    let email = document.getElementById('register-email').value;
+    let password = document.getElementById('register-password').value;
+    let otpInput = document.getElementById('register-otp').value;
     let cb1 = document.getElementById('cb1').checked;
     let cb2 = document.getElementById('cb2').checked;
     let cb3 = document.getElementById('cb3').checked;
-    let btn = document.getElementById('btnSubmit');
+    let btn = document.getElementById('btnSubmitDaftar');
 
     if (!email || !email.includes('@') || !password) {
       alert("Harap isi Email dan Password dengan benar!");
       return;
     }
-
     if (!cb1 || !cb2 || !cb3) {
       alert("Anda harus menyetujui semua syarat dan ketentuan!");
+      return;
+    }
+    if (otpInput !== generatedOtp || generatedOtp === "") {
+      alert("Kode OTP salah atau belum diminta!");
+      return;
+    }
+
+    btn.innerText = "Mendaftar...";
+    btn.disabled = true;
+
+    try {
+      await setDoc(doc(db, "users", email), {
+        email: email,
+        password: btoa(password), 
+        isKtpUploaded: false,
+        createdAt: new Date().toISOString()
+      });
+      
+      localStorage.setItem('uangku_current_user', email);
+      localStorage.setItem('uangku_ktp_status', 'false');
+      currentUser = email;
+      isKtpUploaded = false;
+      
+      alert("Pendaftaran Berhasil! Selamat datang.");
+      kembaliKeHome(); 
+    } catch (error) {
+      alert("Gagal mendaftar: " + error.message); 
+    } finally {
+      btn.innerText = "Daftar Sekarang";
+      btn.disabled = false;
+    }
+  };
+
+  // ==========================================
+  // LOGIKA LOGIN (TANPA OTP)
+  // ==========================================
+  window.prosesLogin = async function() {
+    let email = document.getElementById('login-email').value;
+    let password = document.getElementById('login-password').value;
+    let remember = document.getElementById('remember-me').checked;
+    let btn = document.getElementById('btnSubmitLogin');
+
+    if (!email || !email.includes('@') || !password) {
+      alert("Harap isi Email dan Password dengan benar!");
       return;
     }
 
@@ -463,65 +573,88 @@
     btn.disabled = true;
 
     try {
-      const docRef = db.collection("users").doc(email);
-      const docSnap = await docRef.get();
+      const docRef = doc(db, "users", email);
+      const docSnap = await getDoc(docRef);
 
-      // SKENARIO 1: USER LAMA
-      if (docSnap.exists) {
+      if (docSnap.exists()) {
         let dataUser = docSnap.data();
         if (dataUser.password === btoa(password)) {
+          
+          if (remember) {
+            localStorage.setItem('uangku_remember_email', email);
+            localStorage.setItem('uangku_remember_pass', password);
+          } else {
+            localStorage.removeItem('uangku_remember_email');
+            localStorage.removeItem('uangku_remember_pass');
+          }
+
           localStorage.setItem('uangku_current_user', email);
+          localStorage.setItem('uangku_ktp_status', dataUser.isKtpUploaded || false);
           currentUser = email;
-          alert("Login Berhasil! Mengarahkan ke Dashboard...");
+          isKtpUploaded = dataUser.isKtpUploaded || false;
+          
+          alert("Login Berhasil!");
           kembaliKeHome(); 
         } else {
-          alert("Password salah! Silakan coba lagi.");
+          alert("Password salah!");
         }
-      } 
-      // SKENARIO 2: USER BARU
-      else {
-        if (otpInput === generatedOtp && generatedOtp !== "") {
-          await docRef.set({
-            email: email,
-            password: btoa(password), 
-            createdAt: new Date().toISOString()
-          });
-          
-          localStorage.setItem('uangku_current_user', email);
-          currentUser = email;
-          alert("Pendaftaran Berhasil! Silakan lengkapi data KTP Anda.");
-          pindahKeKTP(); 
-        } else {
-          alert("Kode OTP salah atau belum diminta!");
-        }
+      } else {
+        alert("Email belum terdaftar. Silakan daftar terlebih dahulu di tab Daftar.");
       }
     } catch (error) {
-      console.error("Error Firebase:", error);
       alert("Error Sistem: " + error.message); 
     } finally {
-      btn.innerText = "Masuk / Daftar";
+      btn.innerText = "Masuk";
       btn.disabled = false;
     }
-  }
+  };
 
+  // ==========================================
+  // NAVIGASI KTP & HOME
+  // ==========================================
   function pindahKeKTP() {
-    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('auth-page').style.display = 'none';
+    document.getElementById('home-page').style.display = 'none';
     document.getElementById('ktp-page').style.display = 'flex';
     window.scrollTo(0, 0);
   }
 
-  function selesaiUploadKTP() {
-    alert("Data KTP berhasil disimpan! Selamat datang di Dashboard.");
-    kembaliKeHome(); 
-  }
+  window.selesaiUploadKTP = async function() {
+    let btn = document.querySelector('.btn-photo');
+    btn.innerText = "Menyimpan...";
+    btn.disabled = true;
 
-  function kembaliKeHome() {
-    document.getElementById('login-page').style.display = 'none';
+    try {
+      const docRef = doc(db, "users", currentUser);
+      await updateDoc(docRef, {
+        isKtpUploaded: true,
+        ktpUploadedAt: new Date().toISOString()
+      });
+      
+      localStorage.setItem('uangku_ktp_status', 'true');
+      isKtpUploaded = true;
+      
+      alert("Data KTP berhasil disimpan! Sekarang Anda bisa mengajukan pinjaman.");
+      kembaliKeHome(); 
+    } catch (error) {
+      alert("Gagal menyimpan data KTP: " + error.message);
+    } finally {
+      btn.innerText = "Ambil Foto";
+      btn.disabled = false;
+    }
+  };
+
+  window.kembaliKeHome = function() {
+    document.getElementById('auth-page').style.display = 'none';
     document.getElementById('ktp-page').style.display = 'none';
     document.getElementById('home-page').style.display = 'block';
     window.scrollTo(0, 0);
-    updateTampilanHome(); 
+    updateTombolDashboard(); 
   }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    updateTombolDashboard();
+  });
 
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function() {
