@@ -112,10 +112,22 @@ window.switchPage = function(pageId) {
     document.getElementById('page-history').classList.add('active');
   } else if (pageId === 'setting') { 
     document.getElementById('page-setting').classList.add('active');
+  } else if (pageId === 'saldo') {
+    document.getElementById('page-saldo').classList.add('active');
+    muatDataProfil();
+  } else if (pageId === 'invite') {
+    document.getElementById('page-invite').classList.add('active');
+    muatDataProfil();
+  } else if (pageId === 'withdraw') {
+    document.getElementById('page-withdraw').classList.add('active');
+    muatDataProfil();
+  } else if (pageId === 'verifikasi-tarik') {
+    document.getElementById('page-verifikasi-tarik').classList.add('active');
   } else if (pageId === 'profile') {
     document.getElementById('page-profile').classList.add('active');
     if(currentUser) {
         document.getElementById('profile-email').innerText = currentUser;
+        muatDataProfil();
     } else {
         document.getElementById('profile-email').innerText = "Belum Login";
     }
@@ -124,7 +136,7 @@ window.switchPage = function(pageId) {
   document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
   if (pageId === 'home' || pageId === 'auth' || pageId === 'ktp' || pageId === 'ktp-info' || pageId === 'face' || pageId === 'rekening' || pageId === 'alamat' || pageId === 'pekerjaan' || pageId === 'loading' || pageId === 'konfirmasi' || pageId === 'qris' || pageId === 'chat') document.querySelectorAll('.nav-item')[0].classList.add('active');
   if (pageId === 'tagihan') document.querySelectorAll('.nav-item')[1].classList.add('active');
-  if (pageId === 'profile' || pageId === 'history' || pageId === 'setting') document.querySelectorAll('.nav-item')[2].classList.add('active');
+  if (pageId === 'profile' || pageId === 'history' || pageId === 'setting' || pageId === 'saldo' || pageId === 'invite' || pageId === 'withdraw' || pageId === 'verifikasi-tarik') document.querySelectorAll('.nav-item')[2].classList.add('active');
 
   window.scrollTo(0, 0);
 };
@@ -228,7 +240,7 @@ window.prosesDaftar = async function() {
 
   btn.innerText = "Mendaftar..."; btn.disabled = true;
   try {
-    await setDoc(doc(db, "users", email), { email: email, password: btoa(password), isKtpUploaded: false, isFaceVerified: false, createdAt: new Date().toISOString() });
+    await setDoc(doc(db, "users", email), { email: email, password: btoa(password), isKtpUploaded: false, isFaceVerified: false, createdAt: new Date().toISOString(), saldo: 0, referralCode: "", riwayatUndangan: [] });
     localStorage.setItem('pinjamvercel_current_user', email); localStorage.setItem('pinjamvercel_ktp_status', 'false');
     currentUser = email; isKtpUploaded = false;
     showModal("Berhasil", "Pendaftaran berhasil! Silakan lanjutkan.", "success"); 
@@ -827,6 +839,130 @@ function prosesResponBot(input) {
     isBotTyping = false;
   }, 1500);
 }
+
+// ==========================================
+// LOGIKA REFERRAL, SALDO & TARIK SALDO
+// ==========================================
+
+// Generate Kode Referral Unik (Simulasi)
+function generateKodeReferral(email) {
+  let prefix = email.substring(0, 4).toUpperCase();
+  let randomNum = Math.floor(1000 + Math.random() * 9000);
+  return `${prefix}${randomNum}`;
+}
+
+// Memuat Data Saldo & Referral Saat Halaman Profil Dibuka
+window.muatDataProfil = async function() {
+  if (!currentUser) return;
+
+  try {
+    const docSnap = await getDoc(doc(db, "users", currentUser));
+    if (docSnap.exists()) {
+      let dataUser = docSnap.data();
+      
+      // 1. Generate Kode Referral jika belum ada
+      let kodeRef = dataUser.referralCode;
+      if (!kodeRef) {
+        kodeRef = generateKodeReferral(currentUser);
+        await updateDoc(doc(db, "users", currentUser), { referralCode: kodeRef, saldo: 0, riwayatUndangan: [] });
+      }
+
+      // Tampilkan Kode Referral
+      document.getElementById('kode-referral-user').innerText = kodeRef;
+
+      // 2. Tampilkan Saldo
+      let saldo = dataUser.saldo || 0;
+      document.getElementById('profil-saldo').innerText = `Rp${saldo.toLocaleString('id-ID')}`;
+      document.getElementById('saldo-tersedia').innerText = `Rp${saldo.toLocaleString('id-ID')}`;
+      document.getElementById('saldo-tarik-tampil').innerText = `Rp${saldo.toLocaleString('id-ID')}`;
+
+      // 3. Render Riwayat Undangan
+      let riwayatList = document.getElementById('riwayat-undangan-list');
+      if (dataUser.riwayatUndangan && dataUser.riwayatUndangan.length > 0) {
+        riwayatList.innerHTML = '';
+        dataUser.riwayatUndangan.forEach(item => {
+          riwayatList.innerHTML += `
+            <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <p style="font-size: 14px; font-weight: bold; color: #111;">${item.email}</p>
+                <p style="font-size: 12px; color: #888;">${item.tanggal}</p>
+              </div>
+              <div style="color: #2eb85c; font-weight: bold; font-size: 14px;">+ Rp20.000</div>
+            </div>
+          `;
+        });
+      } else {
+        riwayatList.innerHTML = `<div style="text-align: center; padding: 20px; color: #888; font-size: 13px;">Belum ada riwayat undangan.</div>`;
+      }
+    }
+  } catch (error) {
+    console.error("Gagal memuat data profil:", error);
+  }
+};
+
+// Fungsi Salin Kode
+window.salinKodeReferral = function() {
+  let kode = document.getElementById('kode-referral-user').innerText;
+  navigator.clipboard.writeText(kode).then(() => {
+    showModal("Berhasil", "Kode Referral berhasil disalin!", "success");
+  });
+};
+
+// Fungsi Pakai Kode Undangan
+window.gunakanKodeUndangan = async function() {
+  let kodeInput = document.getElementById('input-kode-undangan').value.toUpperCase();
+  
+  if (!kodeInput) {
+    showModal("Perhatian", "Masukkan kode undangan terlebih dahulu.", "warning"); return;
+  }
+
+  if (localStorage.getItem('pinjamvercel_used_referral') === 'true') {
+    showModal("Gagal", "Setiap IP hanya dapat menggunakan 1 kode undangan.", "error"); return;
+  }
+
+  try {
+    let kodeSendiri = document.getElementById('kode-referral-user').innerText;
+    if (kodeInput === kodeSendiri) {
+      showModal("Gagal", "Anda tidak bisa menggunakan kode undangan sendiri.", "error"); return;
+    }
+
+    // Simulasi berhasil
+    localStorage.setItem('pinjamvercel_used_referral', 'true');
+    showModal("Berhasil", "Kode undangan berhasil digunakan! Anda akan mendapatkan bonus.", "success");
+    
+  } catch (error) {
+    showModal("Error", "Terjadi kesalahan: " + error.message, "error");
+  }
+};
+
+// Fungsi Tarik Saldo
+window.prosesTarikSaldo = async function() {
+  if (!currentUser) return;
+
+  let saldoText = document.getElementById('saldo-tarik-tampil').innerText;
+  let saldoAngka = parseInt(saldoText.replace(/[^0-9]/g, ''));
+
+  if (saldoAngka < 200000) {
+    showModal("Saldo Tidak Cukup", "Minimal Tarik Saldo adalah Rp200.000. Saldo Anda saat ini belum mencukupi.", "warning");
+    return;
+  }
+
+  try {
+    const docSnap = await getDoc(doc(db, "users", currentUser));
+    if (docSnap.exists()) {
+      let dataUser = docSnap.data();
+      
+      if (!dataUser.rekeningData) {
+        showModal("Perhatian", "Silakan tambahkan Rekening terlebih dahulu sebelum menarik saldo.", "warning");
+        switchPage('rekening');
+      } else {
+        switchPage('verifikasi-tarik');
+      }
+    }
+  } catch (error) {
+    showModal("Error", "Terjadi kesalahan sistem: " + error.message, "error");
+  }
+};
 
 // ==========================================
 // INIT SELECT2 SAAT HALAMAN DIMUAT
