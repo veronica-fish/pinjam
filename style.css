@@ -396,9 +396,9 @@ body { background-color: #f2f2f2; color: #333; display: flex; justify-content: c
 
 /* --- STYLING HALAMAN CHAT (ISOLASI PENUH) --- */
 #page-chat {
-  display: none; /* Sembunyikan secara default */
+  display: none;
   flex-direction: column;
-  position: fixed; /* Kunci posisi agar tidak ikut scroll halaman utama */
+  position: fixed;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
@@ -552,4 +552,13 @@ body { background-color: #f2f2f2; color: #333; display: flex; justify-content: c
   align-items: center;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- STYLING TAMBAHAN SALDO & REFERRAL --- */
+.profile-stat-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.profile-stat-card:active {
+  transform: scale(0.95);
 }
