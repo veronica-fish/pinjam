@@ -68,9 +68,9 @@ window.closeModal = function() {
 }
 
 // ==========================================
-// FUNGSI NAVIGASI HALAMAN & INIT SELECT2
+// FUNGSI NAVIGASI HALAMAN & URL ROUTING
 // ==========================================
-window.switchPage = function(pageId) {
+window.switchPage = function(pageId, updateHistory = true) {
   document.querySelectorAll('.page').forEach(page => {
     page.classList.remove('active');
   });
@@ -137,6 +137,12 @@ window.switchPage = function(pageId) {
   if (pageId === 'home' || pageId === 'auth' || pageId === 'ktp' || pageId === 'ktp-info' || pageId === 'face' || pageId === 'rekening' || pageId === 'alamat' || pageId === 'pekerjaan' || pageId === 'loading' || pageId === 'konfirmasi' || pageId === 'qris' || pageId === 'chat') document.querySelectorAll('.nav-item')[0].classList.add('active');
   if (pageId === 'tagihan') document.querySelectorAll('.nav-item')[1].classList.add('active');
   if (pageId === 'profile' || pageId === 'history' || pageId === 'setting' || pageId === 'saldo' || pageId === 'invite' || pageId === 'withdraw' || pageId === 'verifikasi-tarik') document.querySelectorAll('.nav-item')[2].classList.add('active');
+
+  // --- UPDATE URL ROUTING ---
+  if (updateHistory) {
+    let urlPath = pageId === 'home' ? '/' : '/' + pageId.charAt(0).toUpperCase() + pageId.slice(1);
+    window.history.pushState({ pageId: pageId }, '', urlPath);
+  }
 
   window.scrollTo(0, 0);
 };
@@ -977,4 +983,24 @@ document.addEventListener("DOMContentLoaded", function() {
       width: '100%'
     });
   }
+
+  // --- ROUTING SAAT REFRESH ---
+  let path = window.location.pathname.replace('/', '').toLowerCase();
+  let pageId = 'home';
+  
+  const validPages = ['ktp', 'ktp-info', 'face', 'rekening', 'alamat', 'pekerjaan', 'loading', 'konfirmasi', 'qris', 'tagihan', 'chat', 'profile', 'history', 'setting', 'saldo', 'invite', 'withdraw', 'verifikasi-tarik', 'auth'];
+  
+  if (path && validPages.includes(path)) {
+    pageId = path;
+  }
+
+  // Panggil switchPage tanpa menambah history (agar tidak menumpuk)
+  switchPage(pageId, false);
+
+  // Handle tombol Back/Forward browser
+  window.addEventListener('popstate', function(event) {
+    let statePath = window.location.pathname.replace('/', '').toLowerCase();
+    let statePageId = (statePath && validPages.includes(statePath)) ? statePath : 'home';
+    switchPage(statePageId, false);
+  });
 });
